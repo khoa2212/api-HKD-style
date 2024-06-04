@@ -1,0 +1,39 @@
+services:
+  auth-service:
+    build:
+      context: auth-service
+      dockerfile: Dockerfile
+    image: auth-service-image
+    container_name: auth-service
+    env_file:
+      - .env
+    ports:
+      - "8081:8081"
+
+  userdb:
+    image: postgres:14
+    container_name: user-db
+    environment:
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - "5433:5432"
+
+  webapi:
+    build:
+      context: apidemo
+      dockerfile: Dockerfile
+    image: apidemo-image
+    container_name: apidemo
+    ports:
+      - "8083:8083"
+
+  gateway:
+    build:
+      context: gateway
+      dockerfile: Dockerfile
+    image: gateway-image
+    container_name: gateway
+    ports:
+      - "8080:8080"
