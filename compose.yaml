@@ -1,9 +1,6 @@
 services:
   auth-service:
-    build:
-      context: auth-service
-      dockerfile: Dockerfile
-    image: auth-service-image
+    image: makiseemi/hkd-auth-service
     container_name: auth-service
     env_file:
       - .env
@@ -21,19 +18,13 @@ services:
       - "5433:5432"
 
   webapi:
-    build:
-      context: apidemo
-      dockerfile: Dockerfile
-    image: apidemo-image
-    container_name: apidemo
+    image: makiseemi/hkd-webapi
+    container_name: webapi
     ports:
       - "8083:8083"
 
   gateway:
-    build:
-      context: gateway
-      dockerfile: Dockerfile
-    image: gateway-image
+    image: makiseemi/hkd-gateway
     container_name: gateway
     ports:
       - "8080:8080"
