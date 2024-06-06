@@ -1,0 +1,18 @@
+services:
+  gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: makiseemi/hkd-gateway
+    container_name: gateway
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+    ports:
+      - "8080:8080"
+    networks:
+      - hkd-gateway-network
+
+networks:
+  hkd-gateway-network:
+    name: hkd-network
+    external: true
