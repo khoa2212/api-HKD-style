@@ -1,30 +1,9 @@
-services:
-  auth-service:
-    image: makiseemi/hkd-auth-service
-    container_name: auth-service
-    env_file:
-      - .env
-    ports:
-      - "8081:8081"
+include:
+  - gateway/compose.yaml
+  - auth-service/compose.yaml
+  - webapi/compose.yaml
 
-  userdb:
-    image: postgres:14
-    container_name: user-db
-    environment:
-      - POSTGRES_USER=${POSTGRES_USERNAME}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-    ports:
-      - "5433:5432"
-
-  webapi:
-    image: makiseemi/hkd-webapi
-    container_name: webapi
-    ports:
-      - "8083:8083"
-
-  gateway:
-    image: makiseemi/hkd-gateway
-    container_name: gateway
-    ports:
-      - "8080:8080"
+networks:
+  hkd-network:
+    driver: bridge
+    name: hkd-network

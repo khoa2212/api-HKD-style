@@ -1,0 +1,14 @@
+services:
+  webapi:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: makiseemi/hkd-webapi
+    container_name: webapi
+    networks:
+      - hkd-webapi-network
+
+networks:
+  hkd-webapi-network:
+    name: hkd-network
+    external: true

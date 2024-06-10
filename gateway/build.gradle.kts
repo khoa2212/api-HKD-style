@@ -22,10 +22,11 @@ repositories {
 }
 
 extra["springCloudVersion"] = "2023.0.1"
+extra["auth0JWTVersion"] = "4.4.0"
 
 dependencies {
-//	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.cloud:spring-cloud-starter-gateway")
+	implementation("com.auth0:java-jwt:${property("auth0JWTVersion")}")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.projectlombok:lombok")
