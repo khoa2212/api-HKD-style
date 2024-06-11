@@ -1,4 +1,15 @@
 services:
+  productdb:
+    image: mongo:latest
+    container_name: productdb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
+    networks:
+      - hkd-product-service-network
   product-service:
     build:
       context: .
@@ -7,6 +18,10 @@ services:
     environment:
       - MONGO_URI=${MONGO_URI}
       - MONGO_DATABASE=${MONGO_DATABASE}
+    ports:
+      - "8082:8082"
+    depends_on:
+      - productdb
     networks:
       - hkd-product-service-network
 

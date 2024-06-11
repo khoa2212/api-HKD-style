@@ -5,5 +5,5 @@ spring:
     name: product-service
   data:
     mongodb:
-      uri: mongodb://admin:andy9999@localhost:27017/
-      database: HKD-style
+      uri: ${MONGO_URI}
+      database: ${MONGO_DATABASE}
