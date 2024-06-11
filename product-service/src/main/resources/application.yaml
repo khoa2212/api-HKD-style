@@ -1,9 +1,0 @@
-server:
-  port: 8082
-spring:
-  application:
-    name: product-service
-  data:
-    mongodb:
-      uri: mongodb+srv://nguyenkhoa438:andy9999@cluster0.hb9awxq.mongodb.net/
-      database: selling-clothes

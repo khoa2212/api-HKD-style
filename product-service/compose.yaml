@@ -1,1 +1,16 @@
 services:
+  product-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: product-service
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - MONGO_DATABASE=${MONGO_DATABASE}
+    networks:
+      - hkd-product-service-network
+
+networks:
+  hkd-product-service-network:
+    name: hkd-network
+    external: true
