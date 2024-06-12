@@ -18,8 +18,10 @@ services:
     environment:
       - MONGO_URI=${MONGO_URI}
       - MONGO_DATABASE=${MONGO_DATABASE}
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:${DEBUG_PORT},server=y,suspend=n
     ports:
       - "8082:8082"
+      - "${DEBUG_PORT}:${DEBUG_PORT}"
     depends_on:
       - productdb
     networks:

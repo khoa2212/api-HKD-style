@@ -7,8 +7,10 @@ services:
     container_name: gateway
     environment:
       - SECRET_KEY=${SECRET_KEY}
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:${DEBUG_PORT},server=y,suspend=n
     ports:
       - "8080:8080"
+      - "${DEBUG_PORT}:${DEBUG_PORT}"
     networks:
       - hkd-gateway-network
 
