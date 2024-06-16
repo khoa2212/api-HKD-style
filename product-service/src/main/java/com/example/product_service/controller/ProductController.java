@@ -28,4 +28,9 @@ public class ProductController {
     public ResponseEntity<ProductDTO> findPaginatedProducts(@PathVariable("id") String id) throws ProductNotFoundException {
         return ResponseEntity.ok().body(productService.findById(id));
     }
+
+    @GetMapping(path = "/products/sales")
+    public ResponseEntity<ListProductResponseDTO> findPaginatedSalesProducts(@RequestParam(value = "pageNumber", defaultValue = "0") int pageNumber, @RequestParam(value = "pageSize", defaultValue = "10") int pageSize) {
+        return ResponseEntity.ok().body(productService.findPaginatedSalesProducts(pageNumber, pageSize));
+    }
 }
