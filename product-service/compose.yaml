@@ -10,6 +10,12 @@ services:
       - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
     networks:
       - hkd-product-service-network
+  mongo-seed:
+    build:
+      context: ./mogo-seed
+      dockerfile: Dockerfile
+    depends_on:
+      - productdb
   product-service:
     build:
       context: .
