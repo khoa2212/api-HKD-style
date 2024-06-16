@@ -9,8 +9,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
@@ -21,12 +19,10 @@ import java.util.Map;
 @Component
 public class JWTAuthFilter extends OncePerRequestFilter {
     private final JWTService jwtService;
-//    private final UserDetailsService userDetailsService;
     private final UserRepository userRepository;
 
     public JWTAuthFilter(JWTService jwtService, UserRepository userRepository) {
         this.jwtService = jwtService;
-//        this.userDetailsService = userDetailsService;
         this.userRepository = userRepository;
     }
 
@@ -40,7 +36,6 @@ public class JWTAuthFilter extends OncePerRequestFilter {
 
         String token = header.substring("Bearer ".length());
         Map<String, String> payload = jwtService.validateToken(token);
-//        UserDetails user = userDetailsService.loadUserByUsername(payload.get("email"));
         UserDetails user = userRepository.findByEmail(payload.get("email")).orElse(null);
         if (user != null) {
             UsernamePasswordAuthenticationToken userToken = new UsernamePasswordAuthenticationToken(

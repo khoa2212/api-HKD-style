@@ -13,13 +13,18 @@ spring:
         - id: app-demo-route
           uri: http://webapi:8083
           predicates:
-            - Path=/api/**
+            - Path=/api/hkd/**
         - id: product-service-route
           uri: http://product-service:8082
           predicates:
             - Path=/products/**
 #          filters:
 #            - AuthFilter
+        - id: user-service-route
+          uri: http://user-service:8084
+          predicates:
+            - Path=/api/users/**
+
 management:
   endpoint:
     gateway:

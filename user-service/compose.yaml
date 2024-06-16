@@ -1,0 +1,44 @@
+services:
+  user-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: makiseemi/hkd-user-service
+    container_name: user-service
+    env_file:
+      - ../.env
+    environment:
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${USER_DB_HOST}
+      - SECRET_KEY=${SECRET_KEY}
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:${USER_DEBUG_PORT},server=y,suspend=n
+    ports:
+      - "${USER_PUBLISH_PORT}:8084"
+      - "${USER_DEBUG_PORT}:${USER_DEBUG_PORT}"
+    networks:
+      - user-service-network
+    depends_on:
+      - userdb
+  userdb:
+    image: postgres:14
+    container_name: userdb
+    environment:
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - TZ=Asia/Ho_Chi_Minh
+    ports:
+      - "${USER_PUBLISH_DB_PORT}:5432"
+    networks:
+     - user-service-network
+    volumes:
+      - user-db-data:/var/lib/postgres/data
+
+networks:
+  user-service-network:
+    name: hkd-network
+    external: true
+volumes:
+  user-db-data:

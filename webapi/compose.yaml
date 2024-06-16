@@ -6,15 +6,36 @@ services:
     image: makiseemi/hkd-webapi
     container_name: webapi
     environment:
+      - POSTGRES_USERNAME=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${WEBAPI_DB_HOST}
       - SECRET_KEY=${SECRET_KEY}
-      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:${DEBUG_PORT},server=y,suspend=n
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:${WEBAPI_DEBUG_PORT},server=y,suspend=n
     ports:
-      - "8083:8083"
-      - "${DEBUG_PORT}:${DEBUG_PORT}"
+      - "${WEBAPI_PUBLISH_PORT}:8083"
+      - "${WEBAPI_DEBUG_PORT}:${WEBAPI_DEBUG_PORT}"
     networks:
       - hkd-webapi-network
+
+  hkd-db:
+    image: postgres:14
+    container_name: hkd-db
+    environment:
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - TZ=Asia/Ho_Chi_Minh
+    ports:
+      - "${WEBAPI_PUBLISH_DB_PORT}:5432"
+    networks:
+      - hkd-webapi-network
+    volumes:
+      - hkd-db-data:/var/lib/postgresql/data
 
 networks:
   hkd-webapi-network:
     name: hkd-network
     external: true
+volumes:
+  hkd-db-data:

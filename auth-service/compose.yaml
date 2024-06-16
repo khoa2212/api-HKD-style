@@ -9,26 +9,17 @@ services:
       - POSTGRES_USERNAME=${POSTGRES_USERNAME}
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_HOST=${USER_DB_HOST}
       - SECRET_KEY=${SECRET_KEY}
-      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:${DEBUG_PORT},server=y,suspend=n
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:${AUTH_DEBUG_PORT},server=y,suspend=n
     ports:
-      - "8081:8081"
-      - "${DEBUG_PORT}:${DEBUG_PORT}"
+      - "${AUTH_PUBLISH_PORT}:8081"
+      - "${AUTH_DEBUG_PORT}:${AUTH_DEBUG_PORT}"
     networks:
       - hkd-auth-service-network
-
-  userdb:
-    image: postgres:14
-    container_name: userdb
-    environment:
-      - POSTGRES_USER=${POSTGRES_USERNAME}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - TZ=Asia/Ho_Chi_Minh
-    ports:
-      - "5433:5432"
-    networks:
-      - hkd-auth-service-network
+    depends_on:
+      - user-service
+      - userdb
 
 networks:
   hkd-auth-service-network:
