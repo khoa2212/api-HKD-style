@@ -40,16 +40,11 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(request ->
                         request
-                                .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
+                                .requestMatchers(HttpMethod.POST,"/auth").permitAll()
                                 .anyRequest().authenticated())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
 
-//        http.exceptionHandling(handler ->
-//                handler.authenticationEntryPoint((
-//                        (request, response, authException)
-//                                -> response.sendError(HttpStatus.UNAUTHORIZED.value(), authException.getMessage()))));
         return http.build();
     }
 

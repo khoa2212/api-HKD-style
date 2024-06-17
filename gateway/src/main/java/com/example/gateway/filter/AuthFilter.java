@@ -1,13 +1,22 @@
 package com.example.gateway.filter;
 
 import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.example.gateway.dto.AuthResponse;
+import com.example.gateway.exception.ErrorMessage;
 import com.example.gateway.utils.JWTProvider;
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory;
 import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.http.HttpCookie;
+import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
@@ -15,11 +24,13 @@ import java.util.Map;
 
 @Component
 public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> {
-    private JWTProvider jwtProvider;
+    private final JWTProvider jwtProvider;
+    private final WebClient webClient;
 
-    public AuthFilter(JWTProvider jwtProvider) {
+    public AuthFilter(JWTProvider jwtProvider, WebClient webClient) {
         super(Config.class);
         this.jwtProvider = jwtProvider;
+        this.webClient = webClient;
     }
 
     @Override
@@ -35,6 +46,23 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
            String token = authHeader.substring("Bearer ".length());
            try {
                jwtProvider.validateToken(token);
+           }
+           catch (TokenExpiredException e) {
+               ServerHttpRequest request = exchange.getRequest();
+               MultiValueMap<String, HttpCookie> cookies = request.getCookies();
+               HttpCookie cookie = cookies.getFirst("refreshToken");
+               AuthResponse res = webClient.get()
+                       .uri("/auth/token")
+                       .retrieve()
+                       .onStatus(HttpStatusCode::isError,
+                               response -> response
+                                       .bodyToMono(ErrorMessage.class)
+                                       .flatMap(body -> Mono.error(() -> new RuntimeException(body.getMessage()))))
+                       .bodyToMono(AuthResponse.class)
+                       .block();
+               if (res != null)
+                request = request.mutate().header("Authorization", "Bearer " + res.getAccessToken()).build();
+               exchange = exchange.mutate().request(request).build();
            }
            catch (JWTVerificationException e) {
                String errorMessage = "Invalid token";
