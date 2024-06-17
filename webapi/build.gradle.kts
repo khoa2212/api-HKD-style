@@ -26,6 +26,7 @@ dependencies {
 	val mapstructVersion = "1.5.5.Final"
 	val lombokMapstructBindingVersion = "0.2.0"
 	val flywayVersion = "10.15.0"
+
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-security")
 	implementation("org.springframework.boot:spring-boot-starter-web")
