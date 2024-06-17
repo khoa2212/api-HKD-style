@@ -1,8 +1,3 @@
-// mongo-init.js
-db = db.getSiblingDB('HKD-style');
-
-// Create the 'products' collection and insert initial data
-db.createCollection('products');
 db.products.insertMany([
    {
       "_id": "390e0801-6b88-4301-9d49-a6bc26fd3ef0",
