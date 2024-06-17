@@ -5,6 +5,12 @@ services:
       dockerfile: Dockerfile
     image: makiseemi/hkd-webapi
     container_name: webapi
+    environment:
+      - SECRET_KEY=${SECRET_KEY}
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:${DEBUG_PORT},server=y,suspend=n
+    ports:
+      - "8083:8083"
+      - "${DEBUG_PORT}:${DEBUG_PORT}"
     networks:
       - hkd-webapi-network
 

@@ -1,0 +1,35 @@
+services:
+  productdb:
+    image: mongo:latest
+    container_name: productdb
+    ports:
+      - "27017:27017"
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=${MONGO_USERNAME}
+      - MONGO_INITDB_ROOT_PASSWORD=${MONGO_PASSWORD}
+      - MONGO_INITDB_DATABASE=${MONGO_DATABASE}
+    volumes:
+      - ./mongo-seed/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js
+    networks:
+      - hkd-product-service-network
+  product-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: product-service
+    environment:
+      - MONGO_URI=${MONGO_URI}
+      - MONGO_DATABASE=${MONGO_DATABASE}
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:${DEBUG_PORT},server=y,suspend=n
+    ports:
+      - "8082:8082"
+      - "${DEBUG_PORT}:${DEBUG_PORT}"
+    depends_on:
+      - productdb
+    networks:
+      - hkd-product-service-network
+
+networks:
+  hkd-product-service-network:
+    name: hkd-network
+    external: true

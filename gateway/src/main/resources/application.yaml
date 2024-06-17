@@ -14,5 +14,17 @@ spring:
           uri: http://webapi:8083
           predicates:
             - Path=/api/**
-          filters:
-            - AuthFilter
+        - id: product-service-route
+          uri: http://product-service:8082
+          predicates:
+            - Path=/products/**
+#          filters:
+#            - AuthFilter
+management:
+  endpoint:
+    gateway:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: gateway
