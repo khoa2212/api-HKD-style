@@ -10,7 +10,6 @@ import com.example.apidemo.product.dto.ProductDTO;
 import com.example.apidemo.product.entity.Product;
 import com.example.apidemo.product.mapper.ProductMapper;
 import com.example.apidemo.product.repository.ProductRepository;
-import com.example.apidemo.review.dto.ReviewDTO;
 import com.example.apidemo.util.UtilService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -104,5 +103,13 @@ public class ProductService {
         productRepository.save(product);
 
         return productMapper.toProductDTO(product);
+    }
+
+    public void delete(String id) throws ProductNotFoundException {
+        Product product = productRepository.findById(UUID.fromString(id)).orElseThrow(() -> new ProductNotFoundException("Product not found", "productNotFound"));
+
+        product.setStatus(StatusEnum.DELETED);
+
+        productRepository.save(product);
     }
 }

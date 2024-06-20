@@ -38,5 +38,11 @@ public class ProductController {
     public ResponseEntity<ProductDTO> add(@Valid @ModelAttribute AddProductRequestDTO addProductRequestDTO) throws IOException {
         return ResponseEntity.ok().body(productService.add(addProductRequestDTO));
     }
+
+    @DeleteMapping(path = "/api/products/{id}")
+    public ResponseEntity delete(@PathVariable("id") String id) throws ProductNotFoundException {
+        productService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
 }
 
