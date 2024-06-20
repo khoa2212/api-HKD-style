@@ -4,6 +4,7 @@ import com.example.apidemo.exception.ProductNotFoundException;
 import com.example.apidemo.product.dto.AddProductRequestDTO;
 import com.example.apidemo.product.dto.ListProductResponseDTO;
 import com.example.apidemo.product.dto.ProductDTO;
+import com.example.apidemo.product.dto.UpdateProductRequestDTO;
 import com.example.apidemo.product.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +44,12 @@ public class ProductController {
     public ResponseEntity delete(@PathVariable("id") String id) throws ProductNotFoundException {
         productService.delete(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping(path = "/api/products/{id}")
+    public ResponseEntity<ProductDTO> update(@PathVariable("id") String id, @Valid @ModelAttribute UpdateProductRequestDTO updateProductRequestDTO) throws IOException, ProductNotFoundException {
+        ProductDTO productDTO = productService.update(id, updateProductRequestDTO);
+        return ResponseEntity.ok().body(productDTO);
     }
 }
 

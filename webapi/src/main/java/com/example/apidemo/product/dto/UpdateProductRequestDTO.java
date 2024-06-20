@@ -11,8 +11,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class AddProductRequestDTO {
-
+public class UpdateProductRequestDTO {
     @NotNull
     private String name;
 
@@ -31,6 +30,6 @@ public class AddProductRequestDTO {
     @NotNull
     private Integer sales;
 
-    @NotNull
+
     private MultipartFile image;
 }

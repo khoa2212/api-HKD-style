@@ -7,6 +7,7 @@ import com.example.apidemo.exception.ProductNotFoundException;
 import com.example.apidemo.product.dto.AddProductRequestDTO;
 import com.example.apidemo.product.dto.ListProductResponseDTO;
 import com.example.apidemo.product.dto.ProductDTO;
+import com.example.apidemo.product.dto.UpdateProductRequestDTO;
 import com.example.apidemo.product.entity.Product;
 import com.example.apidemo.product.mapper.ProductMapper;
 import com.example.apidemo.product.repository.ProductRepository;
@@ -16,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.sound.sampled.Port;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
@@ -111,5 +113,24 @@ public class ProductService {
         product.setStatus(StatusEnum.DELETED);
 
         productRepository.save(product);
+    }
+
+    public ProductDTO update(String id, UpdateProductRequestDTO updateProductRequestDTO) throws ProductNotFoundException, IOException {
+        Product product = productRepository.findById(UUID.fromString(id)).orElseThrow(() -> new ProductNotFoundException("Product not found", "productNotFound"));
+        product.setName(updateProductRequestDTO.getName());
+        product.setSales(updateProductRequestDTO.getSales());
+        product.setCategory(CategoryEnum.valueOf(updateProductRequestDTO.getCategory()));
+        product.setDescription(updateProductRequestDTO.getDescription());
+        product.setStock(updateProductRequestDTO.getStock());
+
+        if(updateProductRequestDTO.getImage() != null) {
+            String url = cloudinaryService.uploadFile(updateProductRequestDTO.getImage());
+            cloudinaryService.deleteFile(product.getAttachment());
+            product.setAttachment(url);
+        }
+
+        productRepository.save(product);
+
+        return productMapper.toProductDTO(product);
     }
 }
