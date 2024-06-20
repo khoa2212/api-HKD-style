@@ -1,20 +1,18 @@
-package com.example.product_service.entity;
+package com.example.apidemo.product.dto;
 
+import com.example.apidemo.review.dto.ReviewDTO;
 import lombok.*;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Set;
 
-@Document("products")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
-@Setter
-public class Product {
-    @Id
+public class ProductDTO {
     private String id;
     private String name;
     private String description;
@@ -23,4 +21,8 @@ public class Product {
     private BigDecimal price;
     private String status;
     private String attachment;
+    private Integer stock;
+    List<ReviewDTO> reviews;
+    private int totalReviews;
+    private double rating;
 }
