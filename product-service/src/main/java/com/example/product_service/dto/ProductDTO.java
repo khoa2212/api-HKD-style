@@ -14,9 +14,9 @@ public class ProductDTO {
     private String id;
     private String name;
     private String description;
-    private Set<String> categories;
+    private String category;
     private Integer sales;
     private BigDecimal price;
     private String status;
-    private Set<String> attachments;
+    private String attachment;
 }

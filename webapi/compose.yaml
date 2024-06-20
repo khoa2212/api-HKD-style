@@ -1,4 +1,18 @@
 services:
+  hkd-db:
+    image: postgres:14
+    container_name: hkd-db
+    environment:
+      - POSTGRES_USER=${POSTGRES_USERNAME}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - TZ=Asia/Ho_Chi_Minh
+    ports:
+      - "${WEBAPI_PUBLISH_DB_PORT}:5432"
+    networks:
+      - hkd-webapi-network
+    volumes:
+      - hkd-db-data:/var/lib/postgresql/data
   webapi:
     build:
       context: .
@@ -15,23 +29,10 @@ services:
     ports:
       - "${WEBAPI_PUBLISH_PORT}:8083"
       - "${WEBAPI_DEBUG_PORT}:${WEBAPI_DEBUG_PORT}"
+    depends_on:
+      - hkd-db
     networks:
       - hkd-webapi-network
-
-  hkd-db:
-    image: postgres:14
-    container_name: hkd-db
-    environment:
-      - POSTGRES_USER=${POSTGRES_USERNAME}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
-      - POSTGRES_DB=${POSTGRES_DB}
-      - TZ=Asia/Ho_Chi_Minh
-    ports:
-      - "${WEBAPI_PUBLISH_DB_PORT}:5432"
-    networks:
-      - hkd-webapi-network
-    volumes:
-      - hkd-db-data:/var/lib/postgresql/data
 
 networks:
   hkd-webapi-network:
