@@ -52,7 +52,7 @@ public class AuthController {
         return ResponseEntity.ok().headers(headers).body(new AuthResponse(accessToken));
     }
 
-    @GetMapping("/api/auth/refresh")
+    @GetMapping("/api/auth/token")
     public ResponseEntity<AuthResponse> getNewAccessToken(
             @CookieValue("refreshToken") String refreshToken) throws JWTVerificationException, JWTCreationException {
 
