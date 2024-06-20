@@ -1,7 +1,10 @@
 package com.example.apidemo.product.service;
 
+import com.example.apidemo.cloudinary.CloudinaryService;
+import com.example.apidemo.enums.CategoryEnum;
 import com.example.apidemo.enums.StatusEnum;
 import com.example.apidemo.exception.ProductNotFoundException;
+import com.example.apidemo.product.dto.AddProductRequestDTO;
 import com.example.apidemo.product.dto.ListProductResponseDTO;
 import com.example.apidemo.product.dto.ProductDTO;
 import com.example.apidemo.product.entity.Product;
@@ -14,6 +17,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +31,9 @@ public class ProductService {
 
     @Autowired
     UtilService utilService;
+
+    @Autowired
+    CloudinaryService cloudinaryService;
 
     public ListProductResponseDTO findPaginatedSalesProducts(int pageNumber, int pageSize) {
         Page<Product> products = productRepository.findBySalesAndStatus(StatusEnum.ACTIVE, PageRequest.of(pageNumber, pageSize));
@@ -78,5 +85,24 @@ public class ProductService {
     public void findTotalReviewsAndRatingOfProduct(ProductDTO dto) {
         dto.setTotalReviews(dto.getReviews().size());
         dto.setRating(utilService.calculateAverageRating(dto.getReviews()));
+    }
+
+    public ProductDTO add(AddProductRequestDTO addProductRequestDTO) throws IOException {
+        String url = cloudinaryService.uploadFile(addProductRequestDTO.getImage());
+        Product product = Product
+                .builder()
+                .name(addProductRequestDTO.getName())
+                .category(CategoryEnum.valueOf(addProductRequestDTO.getCategory()))
+                .description(addProductRequestDTO.getDescription())
+                .stock(addProductRequestDTO.getStock())
+                .sales(addProductRequestDTO.getSales())
+                .price(addProductRequestDTO.getPrice())
+                .attachment(url)
+                .status(StatusEnum.ACTIVE)
+                .build();
+
+        productRepository.save(product);
+
+        return productMapper.toProductDTO(product);
     }
 }
