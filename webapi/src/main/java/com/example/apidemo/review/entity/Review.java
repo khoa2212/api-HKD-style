@@ -21,7 +21,6 @@ import java.util.UUID;
 public class Review extends BaseEntity {
     @Column(nullable = false)
     private UUID userId;
-
     @Column
     private int rating;
     @Column

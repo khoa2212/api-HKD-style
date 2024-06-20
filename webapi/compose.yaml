@@ -33,7 +33,6 @@ services:
       - hkd-db
     networks:
       - hkd-webapi-network
-
 networks:
   hkd-webapi-network:
     name: hkd-network
