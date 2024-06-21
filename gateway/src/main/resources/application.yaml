@@ -9,7 +9,7 @@ spring:
         - id: auth-service-route
           uri: http://auth-service:8081
           predicates:
-            - Path=/auth/**
+            - Path=/api/auth/**
         - id: app-demo-route
           uri: http://webapi:8083
           predicates:

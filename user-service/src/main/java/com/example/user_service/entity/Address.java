@@ -12,26 +12,26 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Builder
-@Entity
-@Table(name = "addresses")
-public class Address extends BaseEntity {
-    @Column
-    private String address;
-    @Column
-    private String city;
-    @Column
-    private String country;
-    @Column
-    private String zip;
-    @Column(name = "phone_number")
-    private String phoneNumber;
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
-}
+//@Getter
+//@Setter
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@Builder
+//@Entity
+//@Table(name = "addresses")
+//public class Address extends BaseEntity {
+//    @Column
+//    private String address;
+//    @Column
+//    private String city;
+//    @Column
+//    private String country;
+//    @Column
+//    private String zip;
+//    @Column(name = "phone_number")
+//    private String phoneNumber;
+//    @ManyToOne
+//    @JoinColumn(name = "user_id")
+//    private User user;
+//
+//}

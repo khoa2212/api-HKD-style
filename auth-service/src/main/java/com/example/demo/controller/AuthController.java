@@ -27,21 +27,9 @@ public class AuthController {
         this.authService = authSerVice;
     }
 
-    @PostMapping("/auth")
+    @PostMapping("/api/auth")
     public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthRequest request) throws AuthenticateException {
         return ResponseEntity.ok().body(authService.authenticate(request));
     }
 
-    @PostMapping(path = "/users",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE}
-    )
-    public ResponseEntity<String> register(@RequestBody @NonNull AuthRequest request) {
-        return ResponseEntity.ok().body(authService.register(request));
-    }
-
-    @GetMapping(path = "/users/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable("userId") Long userId) throws UserNotFoundException {
-        return ResponseEntity.ok().body(authService.findUserById(userId));
-    }
 }

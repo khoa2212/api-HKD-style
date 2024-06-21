@@ -36,14 +36,22 @@ public class User implements UserDetails {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
-    @Column(name = "display_name")
-    private String displayName;
+    @Column(name = "full_name")
+    private String fullName;
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column
+    private String address;
+    @Column
+    private String city;
+    @Column
+    private String phoneNumber;
+
 
 
     @Override

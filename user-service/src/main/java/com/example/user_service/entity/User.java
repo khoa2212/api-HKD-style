@@ -34,14 +34,21 @@ public class User extends BaseEntity implements UserDetails {
     @Column
     private String password;
 
-    @Column(name = "display_name")
-    private String displayName;
+    @Column(name = "full_name")
+    private String fullName;
 
     @Enumerated(EnumType.STRING)
     private Role role;
 
-    @OneToMany(mappedBy = "user")
-    private Set<Address> address;
+    @Column
+    private String address;
+
+    @Column
+    private String city;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
