@@ -34,6 +34,7 @@ dependencies {
 	implementation("org.mapstruct:mapstruct:${mapstructVersion}")
 	implementation("com.auth0:java-jwt:${auth0Version}")
 	implementation("org.flywaydb:flyway-core:${flywayVersion}")
+	implementation("com.cloudinary:cloudinary-http44:1.38.0")
 
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
