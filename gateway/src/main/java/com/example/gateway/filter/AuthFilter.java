@@ -15,6 +15,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
@@ -48,50 +49,41 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
                return response.setComplete();
            }
 
-           String token = authHeader.substring("Bearer ".length());
+           String accessToken = authHeader.substring("Bearer ".length());
            try {
-               jwtProvider.validateToken(token);
+               jwtProvider.validateToken(accessToken);
                return chain.filter(exchange);
            }
            catch (TokenExpiredException e) {
                ServerHttpRequest request = exchange.getRequest();
+               ServerHttpResponse response = exchange.getResponse();
                MultiValueMap<String, HttpCookie> cookies = request.getCookies();
                HttpCookie cookie = cookies.getFirst("refreshToken");
+               if (cookie == null) {
+                    response.setStatusCode(HttpStatus.UNAUTHORIZED);
+                    return response.setComplete();
+               }
                logger.info("starting sending request");
                return webClient.get()
                        .uri("/api/auth/token")
-                       .exchangeToMono(response -> {
-                           if (response.statusCode().isError()) {
-//                               return response.bodyToMono(ErrorMessage.class)
-//                                       .flatMap(err -> {
-//                                           logger.info("received response");
-//                                           logger.info(err.getMessage());
-//                                           ServerHttpResponse res = exchange.getResponse();
-//                                           DataBuffer buffer = res.bufferFactory().wrap(err.getMessage().getBytes(StandardCharsets.UTF_8));
-//                                           res.setStatusCode(HttpStatus.UNAUTHORIZED);
-//                                           logger.info(String.valueOf(res.getStatusCode().value()));
-//                                           res.writeWith(Mono.just(buffer));
-//                                           return res.setComplete();
-//                                       });
-                               logger.info("received response");
-                               ServerHttpResponse res = exchange.getResponse();
-                               DataBuffer buffer = res.bufferFactory().wrap("failed to refresh token".getBytes(StandardCharsets.UTF_8));
-                               res.setStatusCode(HttpStatus.UNAUTHORIZED);
-                               return res.writeWith(Mono.just(buffer));
-
+                       .header(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", accessToken))
+                       .header(HttpHeaders.COOKIE, String.format("%s=%s", cookie.getName(), cookie.getValue()))
+                       .exchangeToMono(authResponse -> {
+                           if (authResponse.statusCode().isError()) {
+                               return authResponse.bodyToMono(ErrorMessage.class)
+                                       .flatMap(err -> {
+                                           logger.info("received response");
+                                           logger.info(err.getMessage());
+                                           ServerHttpResponse res = exchange.getResponse();
+                                           DataBuffer buffer = res.bufferFactory().wrap(err.getMessage().getBytes(StandardCharsets.UTF_8));
+                                           res.setStatusCode(HttpStatus.UNAUTHORIZED);
+                                           res.getHeaders().setContentType(MediaType.APPLICATION_JSON);
+                                           return res.writeWith(Mono.just(buffer));
+                                       });
                            }
-                           return response.bodyToMono(AuthResponse.class)
+                           return authResponse.bodyToMono(AuthResponse.class)
                                    .flatMap(body -> chain.filter(setAuthHeaderWithToken(exchange, body.getAccessToken())));
                        });
-//                       .onStatus(HttpStatusCode::isError,
-//                               response -> response
-//                                       .bodyToMono(ErrorMessage.class)
-//                                       .flatMap(body -> Mono.error(() -> new RuntimeException(body.getMessage()))))
-//                       .bodyToMono(AuthResponse.class)
-//                       .flatMap(response -> {
-//                           String accessToken = response.getAccessToken();
-//                           return chain.filter(setAuthHeaderWithToken(exchange, accessToken));
-//                       });
            }
            catch (JWTVerificationException e) {
                String errorMessage = "Invalid token";

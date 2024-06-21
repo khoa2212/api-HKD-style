@@ -13,4 +13,5 @@ import lombok.Setter;
 @Builder
 public class ErrorBody {
     private String message;
+    private String statusCode;
 }
