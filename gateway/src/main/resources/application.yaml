@@ -13,7 +13,9 @@ spring:
         - id: app-demo-route
           uri: http://webapi:8083
           predicates:
-            - Path=/api/hkd/**
+            - Path=/api/main/**
+          filters:
+            - AuthFilter
         - id: product-service-route
           uri: http://product-service:8082
           predicates:

@@ -12,5 +12,5 @@ import lombok.Setter;
 @Setter
 @Builder
 public class AuthResponse {
-    private String token;
+    private String accessToken;
 }

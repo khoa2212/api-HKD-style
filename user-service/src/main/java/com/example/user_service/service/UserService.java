@@ -36,13 +36,9 @@ public class UserService {
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .role(Role.USER)
-                .displayName(request.getDisplayName())
+                .fullName(request.getFullName())
                 .build();
-//        if (request.getAddress() != null) {
-//            Address address = userMapper.toAddress(request.getAddress());
-//
-//            user.setAddress(Set.of(address));
-//        }
+
         return userMapper.toUserResponseDTO(userRepository.save(user));
     }
 

@@ -82,7 +82,10 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
                                        });
                            }
                            return authResponse.bodyToMono(AuthResponse.class)
-                                   .flatMap(body -> chain.filter(setAuthHeaderWithToken(exchange, body.getAccessToken())));
+                                   .flatMap(body ->  {
+                                       logger.info(body.getAccessToken());
+                                       return chain.filter(setAuthHeaderWithToken(exchange, body.getAccessToken()));
+                                   });
                        });
            }
            catch (JWTVerificationException e) {
