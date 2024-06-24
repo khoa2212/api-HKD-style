@@ -2,6 +2,7 @@ package com.example.demo.config;
 
 import com.example.demo.filter.JWTAuthFilter;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.service.JWTService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -23,11 +24,11 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableWebSecurity
 public class SecurityConfig {
     private final UserRepository userRepository;
-    private final JWTAuthFilter jwtAuthFilter;
+    private final JWTService jwtService;
 
-    public SecurityConfig(UserRepository userRepository, JWTAuthFilter jwtAuthFilter) {
+    public SecurityConfig(UserRepository userRepository, JWTService jwtService) {
         this.userRepository = userRepository;
-        this.jwtAuthFilter = jwtAuthFilter;
+        this.jwtService = jwtService;
     }
 
     @Bean
@@ -38,18 +39,9 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         http.csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(request ->
-                        request
-                                .requestMatchers("/auth/**").permitAll()
-                                .requestMatchers(HttpMethod.POST, "/users/**").permitAll()
-                                .anyRequest().authenticated())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+                .authorizeHttpRequests(request -> request.anyRequest().permitAll())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-//        http.exceptionHandling(handler ->
-//                handler.authenticationEntryPoint((
-//                        (request, response, authException)
-//                                -> response.sendError(HttpStatus.UNAUTHORIZED.value(), authException.getMessage()))));
         return http.build();
     }
 

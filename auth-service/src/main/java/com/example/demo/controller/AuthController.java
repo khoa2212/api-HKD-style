@@ -1,47 +1,53 @@
 package com.example.demo.controller;
 
+import com.auth0.jwt.exceptions.JWTCreationException;
+import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.example.demo.dto.AuthRequest;
 import com.example.demo.dto.AuthResponse;
-import com.example.demo.dto.UserResponseDTO;
-import com.example.demo.exception.AuthenticateException;
-import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
-import org.springframework.lang.NonNull;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 public class AuthController {
-    private AuthService authService;
+    private final AuthService authService;
 
     @Autowired
     public AuthController(AuthService authSerVice) {
         this.authService = authSerVice;
     }
 
-    @PostMapping("/auth")
-    public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthRequest request) throws AuthenticateException {
-        return ResponseEntity.ok().body(authService.authenticate(request));
+    @PostMapping("/api/auth")
+    public ResponseEntity<AuthResponse> authenticate(@RequestBody AuthRequest request) throws BadCredentialsException, JWTCreationException {
+        Map<String, String> tokens = authService.authenticate(request);
+        String accessToken = tokens.get("accessToken");
+        String refreshToken = tokens.get("refreshToken");
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken")
+                .value(refreshToken)
+                .maxAge(authService.getRefreshTokenExpTime())
+                .httpOnly(true)
+                .build();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.ok().headers(headers).body(new AuthResponse(accessToken));
     }
 
-    @PostMapping(path = "/users",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE}
-    )
-    public ResponseEntity<String> register(@RequestBody @NonNull AuthRequest request) {
-        return ResponseEntity.ok().body(authService.register(request));
-    }
+    @GetMapping("/api/auth/token")
+    public ResponseEntity<AuthResponse> getNewAccessToken(
+            @CookieValue("refreshToken") String refreshToken) throws JWTVerificationException, JWTCreationException {
 
-    @GetMapping(path = "/users/{userId}", produces = {MediaType.APPLICATION_JSON_VALUE})
-    public ResponseEntity<UserResponseDTO> getUserById(@PathVariable("userId") Long userId) throws UserNotFoundException {
-        return ResponseEntity.ok().body(authService.findUserById(userId));
+        return ResponseEntity.ok().body(new AuthResponse(authService.getNewAccessToken(refreshToken)));
     }
 }

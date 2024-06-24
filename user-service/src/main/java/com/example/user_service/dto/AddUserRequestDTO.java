@@ -17,5 +17,5 @@ import lombok.Setter;
 public class AddUserRequestDTO {
     private String email;
     private String password;
-    private String displayName;
+    private String fullName;
 }
