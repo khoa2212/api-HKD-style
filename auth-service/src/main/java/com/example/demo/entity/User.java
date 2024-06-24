@@ -47,13 +47,12 @@ public class User implements UserDetails {
 
     @Column
     private String address;
+
     @Column
     private String city;
+
     @Column
     private String phoneNumber;
-
-
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));

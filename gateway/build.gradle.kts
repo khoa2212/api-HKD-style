@@ -27,6 +27,7 @@ extra["auth0JWTVersion"] = "4.4.0"
 dependencies {
 	implementation("org.springframework.cloud:spring-cloud-starter-gateway")
 	implementation("com.auth0:java-jwt:${property("auth0JWTVersion")}")
+	implementation("org.springframework.boot:spring-boot-starter-logging:3.2.6")
 	compileOnly("org.projectlombok:lombok")
 	developmentOnly("org.springframework.boot:spring-boot-devtools")
 	annotationProcessor("org.projectlombok:lombok")

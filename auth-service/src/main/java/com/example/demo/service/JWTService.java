@@ -25,13 +25,21 @@ public class JWTService {
 
     private final String issuer = "HKD Style";
 
-    public String generateToken(Map<String, String> claims) throws JWTCreationException {
+    /**
+     * Generate a JWT token
+     @param subject The subject of this token
+     @param expiredTime The expired time of this token in seconds
+     @param claims The custom claims for this token
+     @return A signed token string
+    **/
+    public String generateToken(String subject, int expiredTime, Map<String, String> claims) throws JWTCreationException {
         Algorithm algorithm = Algorithm.HMAC256(SECRET_KEY);
         return JWT.create()
+                .withSubject(subject)
                 .withIssuer(issuer)
                 .withIssuedAt(Instant.now())
                 .withPayload(claims)
-                .withExpiresAt(Instant.now().plusSeconds(3 * 60 * 60))
+                .withExpiresAt(Instant.now().plusSeconds(expiredTime))
                 .sign(algorithm);
     }
 
@@ -42,6 +50,7 @@ public class JWTService {
                 .withIssuer(issuer)
                 .build();
         DecodedJWT decodedJWT = verifier.verify(token);
+
         Map<String, String> claims = new HashMap<>();
         for (String k : decodedJWT.getClaims().keySet()) {
             claims.put(k, decodedJWT.getClaim(k).asString());

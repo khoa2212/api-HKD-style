@@ -46,9 +46,8 @@ public class User extends BaseEntity implements UserDetails {
     @Column
     private String city;
 
-    @Column(name = "phone_number")
+    @Column
     private String phoneNumber;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
