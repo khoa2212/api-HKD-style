@@ -55,4 +55,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 new ErrorMessage(message, "BadRequest")
         );
     }
+
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<ErrorMessage> handlePasswordMismatchException(
+            PasswordMismatchException ex, WebRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ErrorMessage(ex.getMessage(), "BadRequest")
+        );
+    }
 }

@@ -26,6 +26,8 @@ spring:
           uri: http://user-service:8084
           predicates:
             - Path=/api/users/**
+          filters:
+            - AuthFilter
       httpclient:
         wiretap: true
       httpserver:
