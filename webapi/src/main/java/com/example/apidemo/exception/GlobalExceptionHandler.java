@@ -1,5 +1,6 @@
 package com.example.apidemo.exception;
 
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -8,28 +9,41 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.util.HashMap;
+import java.util.InvalidPropertiesFormatException;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<ErrorBody> userNotFoundExceptionHandler(
+    public ResponseEntity<ErrorMessage> userNotFoundExceptionHandler(
             ProductNotFoundException ex, WebRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorBody(ex.getMessage(), ex.getCode()));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorMessage(ex.getMessage(), ex.getCode()));
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorBody>  handleInvalidArgument(MethodArgumentNotValidException ex) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorBody(ex.getMessage(), ""));
+    public ResponseEntity<ErrorMessage>  handleInvalidArgument(MethodArgumentNotValidException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorMessage(ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage(), "BAD_REQUEST"));
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<ErrorBody> handleAuthenticationException(BadCredentialsException ex) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorBody(ex.getMessage(), "unauthorized"));
+    public ResponseEntity<ErrorMessage> handleAuthenticationException(BadCredentialsException ex) {
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorMessage(ex.getMessage(), "UNAUTHORIZED"));
+    }
+
+    @ExceptionHandler(ReviewNotFoundException.class)
+    public ResponseEntity<ErrorMessage> handleReviewNotFoundException(ReviewNotFoundException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorMessage(ex.getMessage(), "NOT_FOUND"));
+    }
+    @ExceptionHandler(InvalidPropertiesFormatException.class)
+    public ResponseEntity<ErrorMessage> handleInvalidPropertiesFormatException(InvalidPropertiesFormatException ex, WebRequest request) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorMessage(ex.getMessage(), "INVALID"));
     }
 
     @ExceptionHandler(Exception.class)

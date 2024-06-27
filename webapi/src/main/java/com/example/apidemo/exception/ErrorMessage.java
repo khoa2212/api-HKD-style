@@ -7,7 +7,7 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-public class ErrorBody {
+public class ErrorMessage {
     private String message;
     private String code;
 }
