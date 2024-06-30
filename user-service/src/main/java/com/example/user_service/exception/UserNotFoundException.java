@@ -1,7 +1,11 @@
 package com.example.user_service.exception;
 
-public class UserNotFoundException extends Exception {
+import lombok.Getter;
+
+@Getter
+public class UserNotFoundException extends BaseAppException {
     public UserNotFoundException(String message) {
-        super(message);
+        super(message, "UserNotFound");
     }
+
 }

@@ -13,6 +13,7 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_HOST=${USER_DB_HOST}
       - SECRET_KEY=${SECRET_KEY}
+      - FRONTEND_RESET_PASSWORD_ENDPOINT=${FRONTEND_RESET_PASSWORD_ENDPOINT}
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:${USER_DEBUG_PORT},server=y,suspend=n
     ports:
       - "${USER_PUBLISH_PORT}:8084"

@@ -28,6 +28,8 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests ->
                     requests.requestMatchers(HttpMethod.POST, "/api/users").permitAll()
+                            .requestMatchers("/api/users/forgot-password").permitAll()
+                            .requestMatchers("/api/users/reset-password").permitAll()
                             .anyRequest().authenticated()
                 )
                 .addFilterBefore(new JWTFilter(jwtService, userRepository), UsernamePasswordAuthenticationFilter.class);

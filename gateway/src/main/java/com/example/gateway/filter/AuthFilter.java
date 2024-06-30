@@ -26,6 +26,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -46,7 +47,7 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
            ServerHttpRequest request = exchange.getRequest();
            ServerHttpResponse response = exchange.getResponse();
 
-           if (request.getPath().pathWithinApplication().value().equals("/api/users") && request.getMethod() == HttpMethod.POST)
+           if (isUnauthenticatedEndpoint(request.getPath().pathWithinApplication().value(), request.getMethod()))
                return chain.filter(exchange);
 
            String authHeader = request.getHeaders().getFirst("Authorization");
@@ -105,6 +106,16 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
         return exchange.mutate()
                 .request(req -> req.header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .build();
+    }
+
+    private boolean isUnauthenticatedEndpoint(String endpoint, HttpMethod method) {
+        List<String> unauthEndpoints = List.of("/api/users", "/api/users/forgot-password", "/api/users/reset-password");
+        return unauthEndpoints.stream().anyMatch(url -> {
+            if (endpoint.equals("/api/users"))
+                return method == HttpMethod.POST;
+            return url.equals(endpoint);
+        });
+
     }
 
     public static class Config {
