@@ -1,0 +1,21 @@
+services:
+  email-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: makiseemi/hkd-email-service
+    container_name: email-service
+    environment:
+      - APP_EMAIL=${APP_EMAIL}
+      - APP_PASSWORD=${APP_PASSWORD}
+      - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:${EMAIL_DEBUG_PORT},server=y,suspend=n
+    ports:
+      - "${EMAIL_PUBLISH_PORT}:8085"
+      - "${EMAIL_DEBUG_PORT}:${EMAIL_DEBUG_PORT}"
+    networks:
+    - hkd-email-service-network
+
+networks:
+  hkd-email-service-network:
+    name: hkd-network
+    external: true

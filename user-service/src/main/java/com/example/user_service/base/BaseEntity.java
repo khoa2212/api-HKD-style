@@ -23,7 +23,7 @@ public abstract class BaseEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     protected UUID id;
     @CreationTimestamp
-    protected LocalDateTime created_at;
+    protected LocalDateTime createdAt;
     @UpdateTimestamp
-    protected LocalDateTime updated_at;
+    protected LocalDateTime updatedAt;
 }

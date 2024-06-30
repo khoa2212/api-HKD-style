@@ -20,20 +20,16 @@ import java.util.stream.Collectors;
 
 @Service
 public class AuthService {
-    private final UserRepository userRepository;
     private final AuthenticationManager authenticationManager;
     private final JWTService jwtService;
 
     @Getter
-    private final int accessTokenExpTime = 60;
+    private final int accessTokenExpTime = 30 * 60;
     @Getter
-    private final int refreshTokenExpTime = 5*60;
+    private final int refreshTokenExpTime = 3 * 24 * 60 * 60;
 
     @Autowired
-    public AuthService(
-            UserRepository userRepository,
-            AuthenticationManager authenticationManager, JWTService jwtService) {
-        this.userRepository = userRepository;
+    public AuthService(AuthenticationManager authenticationManager, JWTService jwtService) {
         this.authenticationManager = authenticationManager;
         this.jwtService = jwtService;
     }

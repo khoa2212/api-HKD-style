@@ -17,7 +17,10 @@ import java.util.UUID;
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class UserResponseDTO {
-    private UUID id;
+    private String id;
     private String email;
     private String fullName;
+    private String address;
+    private String city;
+    private String phoneNumber;
 }
