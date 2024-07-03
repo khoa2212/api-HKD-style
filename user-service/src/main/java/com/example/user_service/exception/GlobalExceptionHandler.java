@@ -55,4 +55,20 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
                 new ErrorMessage(message, "BadRequest")
         );
     }
+
+    @ExceptionHandler(PasswordMismatchException.class)
+    public ResponseEntity<ErrorMessage> handlePasswordMismatchException(
+            PasswordMismatchException ex, WebRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ErrorMessage(ex.getMessage(), "BadRequest")
+        );
+    }
+
+    @ExceptionHandler({InvalidURLTokenException.class, ExpiredURLTokenException.class})
+    public ResponseEntity<ErrorMessage> handleURLTokenException(
+            BaseAppException ex, WebRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getErrorMessage());
+    }
 }
