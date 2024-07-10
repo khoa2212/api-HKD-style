@@ -12,6 +12,7 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.http.HttpCookie;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -25,6 +26,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -42,9 +44,14 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
     public GatewayFilter apply(Config config) {
         Logger logger = LoggerFactory.getLogger(AuthFilter.class);
         return ((exchange, chain) -> {
-           String authHeader = exchange.getRequest().getHeaders().getFirst("Authorization");
+           ServerHttpRequest request = exchange.getRequest();
+           ServerHttpResponse response = exchange.getResponse();
+
+           if (isUnauthenticatedEndpoint(request.getPath().pathWithinApplication().value(), request.getMethod()))
+               return chain.filter(exchange);
+
+           String authHeader = request.getHeaders().getFirst("Authorization");
            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-               ServerHttpResponse response = exchange.getResponse();
                response.setStatusCode(HttpStatus.UNAUTHORIZED);
                return response.setComplete();
            }
@@ -55,8 +62,6 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
                return chain.filter(exchange);
            }
            catch (TokenExpiredException e) {
-               ServerHttpRequest request = exchange.getRequest();
-               ServerHttpResponse response = exchange.getResponse();
                MultiValueMap<String, HttpCookie> cookies = request.getCookies();
                HttpCookie cookie = cookies.getFirst("refreshToken");
                if (cookie == null) {
@@ -90,7 +95,6 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
            }
            catch (JWTVerificationException e) {
                String errorMessage = "Invalid token";
-               ServerHttpResponse response = exchange.getResponse();
                DataBuffer buffer = response.bufferFactory().wrap(errorMessage.getBytes(StandardCharsets.UTF_8));
                response.setStatusCode(HttpStatus.UNAUTHORIZED);
                return response.writeWith(Mono.just(buffer));
@@ -102,6 +106,16 @@ public class AuthFilter extends AbstractGatewayFilterFactory<AuthFilter.Config> 
         return exchange.mutate()
                 .request(req -> req.header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .build();
+    }
+
+    private boolean isUnauthenticatedEndpoint(String endpoint, HttpMethod method) {
+        List<String> unauthEndpoints = List.of("/api/users", "/api/users/forgot-password", "/api/users/reset-password");
+        return unauthEndpoints.stream().anyMatch(url -> {
+            if (endpoint.equals("/api/users"))
+                return method == HttpMethod.POST;
+            return url.equals(endpoint);
+        });
+
     }
 
     public static class Config {

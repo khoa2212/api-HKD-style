@@ -24,9 +24,9 @@ public class AuthService {
     private final JWTService jwtService;
 
     @Getter
-    private final int accessTokenExpTime = 60;
+    private final int accessTokenExpTime = 30 * 60;
     @Getter
-    private final int refreshTokenExpTime = 5*60;
+    private final int refreshTokenExpTime = 3 * 24 * 60 * 60;
 
     @Autowired
     public AuthService(AuthenticationManager authenticationManager, JWTService jwtService) {

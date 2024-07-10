@@ -2,8 +2,8 @@ include:
   - gateway/compose.yaml
   - auth-service/compose.yaml
   - webapi/compose.yaml
-  - product-service/compose.yaml
   - user-service/compose.yaml
+  - email-service/compose.yaml
 
 networks:
   hkd-network:

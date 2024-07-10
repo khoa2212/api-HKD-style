@@ -16,16 +16,16 @@ spring:
             - Path=/api/main/**
           filters:
             - AuthFilter
-        - id: product-service-route
-          uri: http://product-service:8082
-          predicates:
-            - Path=/products/**
-          filters:
-            - AuthFilter
         - id: user-service-route
           uri: http://user-service:8084
           predicates:
             - Path=/api/users/**
+          filters:
+            - AuthFilter
+        - id: email-service-route
+          uri: http://email-service:8085
+          predicates:
+            - Path=/api/mail/**
       httpclient:
         wiretap: true
       httpserver:
