@@ -28,35 +28,19 @@ public class ReviewService {
 
     @Autowired
     ProductRepository productRepository;
-    public List<ReviewDTO> findAll() {
-        List<Review> listReview = reviewRepository.findAll();
-        return reviewMapper.toListDTO(listReview);
-    }
 
-    public ReviewDTO findById(UUID reviewID) throws ReviewNotFoundException {
-        Review review = reviewRepository.findById(reviewID)
-                .orElseThrow(() -> new ReviewNotFoundException(ExceptionMessage.REVIEW_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
-        return reviewMapper.toDTO(review);
-    }
-
-    public List<ReviewDTO> findAllByProductId(UUID productID, Integer rating) throws ProductNotFoundException {
+    public List<ReviewDTO> findAllByProductId(UUID productID) throws ProductNotFoundException {
         Product product = productRepository.findById(productID)
-                .orElseThrow(() -> new ProductNotFoundException("Product not found", "NOT_FOUND"));
-        List<Review> reviews;
-        if (rating == null) {
-            reviews = reviewRepository.findByProductId(productID);
-        }
-        else {
-            reviews = reviewRepository.findByProductIdAndRating(productID, rating);
-        }
+                .orElseThrow(() -> new ProductNotFoundException(ExceptionMessage.PRODUCT_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
+        List<Review> reviews = reviewRepository.findByProductId(productID);;
         return reviewMapper.toListDTO(reviews);
     }
 
-    public ReviewDTO add(AddReviewRequestDTO addReviewRequestDTO) throws ProductNotFoundException {
+    public ReviewDTO add(String userId, AddReviewRequestDTO addReviewRequestDTO) throws ProductNotFoundException {
         Product product = productRepository.findById(UUID.fromString(addReviewRequestDTO.getProductId()))
-                .orElseThrow(() -> new ProductNotFoundException("Product not found", "NOT_FOUND"));
+                .orElseThrow(() -> new ProductNotFoundException(ExceptionMessage.REVIEW_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
 
-        Review review = Review.builder().userId(UUID.fromString(addReviewRequestDTO.getUserId()))
+        Review review = Review.builder().userId(UUID.fromString(userId))
                 .fullName(addReviewRequestDTO.getFullName())
                 .content(addReviewRequestDTO.getContent())
                 .rating(addReviewRequestDTO.getRating())
@@ -68,7 +52,7 @@ public class ReviewService {
         return reviewMapper.toDTO(addedReview);
     }
 
-    public ReviewDTO update(@Valid String reviewID, UpdateReviewRequestDTO updateReviewRequestDTO) throws ReviewNotFoundException {
+    public ReviewDTO update(String reviewID, UpdateReviewRequestDTO updateReviewRequestDTO) throws ReviewNotFoundException {
         Review review = reviewRepository.findById(UUID.fromString(reviewID))
                 .orElseThrow(() -> new ReviewNotFoundException(ExceptionMessage.REVIEW_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
 
@@ -89,7 +73,7 @@ public class ReviewService {
         return reviewMapper.toDTO(updatedReview);
     }
 
-    public void delete(@Valid String reviewID) throws ReviewNotFoundException {
+    public void delete(String reviewID) throws ReviewNotFoundException {
         Review review = reviewRepository.findById(UUID.fromString(reviewID))
                 .orElseThrow(() -> new ReviewNotFoundException(ExceptionMessage.REVIEW_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
 

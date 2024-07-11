@@ -4,7 +4,6 @@ import com.example.apidemo.exception.ExceptionMessage;
 import com.example.apidemo.exception.ProductNotFoundException;
 import com.example.apidemo.product.entity.Product;
 import com.example.apidemo.product.repository.ProductRepository;
-import com.example.apidemo.util.JWTService;
 import com.example.apidemo.wishlist.dto.WishlistProductDTO;
 import com.example.apidemo.wishlist.dto.WishlistResponseDTO;
 import com.example.apidemo.wishlist.entity.Wishlist;
@@ -36,7 +35,7 @@ public class WishlistService {
                 .toList();
     }
 
-    public WishlistResponseDTO getWishListByUser(UUID userId) {
+    public WishlistResponseDTO getByUserId(UUID userId) {
         List<WishlistProductDTO> products = getWishlistProductByUserId(userId);
 
         return WishlistResponseDTO.builder()
@@ -57,4 +56,10 @@ public class WishlistService {
         return wishlistMapper.toWishListProductDTO(product);
     }
 
+    public void removeProductFromWishlist(UUID itemId) throws ProductNotFoundException {
+        Wishlist item = wishlistRepository.findById(itemId).orElseThrow(
+                () -> new ProductNotFoundException(ExceptionMessage.PRODUCT_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
+
+        wishlistRepository.delete(item);
+    }
 }

@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 public class ExceptionMessage {
     public static final String PRODUCT_NOT_FOUND = "Product cannot be found";
     public static final String REVIEW_NOT_FOUND = "Review cannot be found";
-    public static final String PRODUCT_NOT_FOUND_CODE = "ProductNotFound";
-    public static final String REVIEW_NOT_FOUND_CODE = "ReviewNotFound";
+    public static final String PRODUCT_NOT_FOUND_CODE = "productNotFound";
+    public static final String REVIEW_NOT_FOUND_CODE = "reviewNotFound";
     public static final String SUCCESS_MESSAGE = "Success";
 }
