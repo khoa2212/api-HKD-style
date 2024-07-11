@@ -5,12 +5,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -25,5 +22,5 @@ public class Cart extends BaseEntity {
     @Column(nullable = false)
     private UUID userId;
     @OneToMany(mappedBy = "cart")
-    private Set<CartItem> cartItems;
+    private List<CartItem> cartItems;
 }
