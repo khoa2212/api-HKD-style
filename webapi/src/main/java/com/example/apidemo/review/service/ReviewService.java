@@ -1,5 +1,6 @@
 package com.example.apidemo.review.service;
 
+import com.example.apidemo.exception.ExceptionMessage;
 import com.example.apidemo.exception.ProductNotFoundException;
 import com.example.apidemo.exception.ReviewNotFoundException;
 import com.example.apidemo.product.entity.Product;
@@ -27,18 +28,18 @@ public class ReviewService {
 
     @Autowired
     ProductRepository productRepository;
-    public List<ReviewDTO> findAllReview() {
+    public List<ReviewDTO> findAll() {
         List<Review> listReview = reviewRepository.findAll();
         return reviewMapper.toListDTO(listReview);
     }
 
-    public ReviewDTO findReviewById(UUID reviewID) throws ReviewNotFoundException {
+    public ReviewDTO findById(UUID reviewID) throws ReviewNotFoundException {
         Review review = reviewRepository.findById(reviewID)
-                .orElseThrow(() -> new ReviewNotFoundException("Review not found"));
+                .orElseThrow(() -> new ReviewNotFoundException(ExceptionMessage.REVIEW_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
         return reviewMapper.toDTO(review);
     }
 
-    public List<ReviewDTO> findAllReviewsByProductId(UUID productID, Integer rating) throws ProductNotFoundException {
+    public List<ReviewDTO> findAllByProductId(UUID productID, Integer rating) throws ProductNotFoundException {
         Product product = productRepository.findById(productID)
                 .orElseThrow(() -> new ProductNotFoundException("Product not found", "NOT_FOUND"));
         List<Review> reviews;
@@ -51,7 +52,7 @@ public class ReviewService {
         return reviewMapper.toListDTO(reviews);
     }
 
-    public ReviewDTO addReview(AddReviewRequestDTO addReviewRequestDTO) throws ProductNotFoundException {
+    public ReviewDTO add(AddReviewRequestDTO addReviewRequestDTO) throws ProductNotFoundException {
         Product product = productRepository.findById(UUID.fromString(addReviewRequestDTO.getProductId()))
                 .orElseThrow(() -> new ProductNotFoundException("Product not found", "NOT_FOUND"));
 
@@ -67,9 +68,9 @@ public class ReviewService {
         return reviewMapper.toDTO(addedReview);
     }
 
-    public ReviewDTO updateReview(@Valid String reviewID, UpdateReviewRequestDTO updateReviewRequestDTO) throws ReviewNotFoundException {
+    public ReviewDTO update(@Valid String reviewID, UpdateReviewRequestDTO updateReviewRequestDTO) throws ReviewNotFoundException {
         Review review = reviewRepository.findById(UUID.fromString(reviewID))
-                .orElseThrow(() -> new ReviewNotFoundException("Not found review"));
+                .orElseThrow(() -> new ReviewNotFoundException(ExceptionMessage.REVIEW_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
 
         if(updateReviewRequestDTO.getContent() != null) {
             review.setContent(updateReviewRequestDTO.getContent());
@@ -88,9 +89,9 @@ public class ReviewService {
         return reviewMapper.toDTO(updatedReview);
     }
 
-    public void deleteReview(@Valid String reviewID) throws ReviewNotFoundException {
+    public void delete(@Valid String reviewID) throws ReviewNotFoundException {
         Review review = reviewRepository.findById(UUID.fromString(reviewID))
-                .orElseThrow(() -> new ReviewNotFoundException("Review not found"));
+                .orElseThrow(() -> new ReviewNotFoundException(ExceptionMessage.REVIEW_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
 
         reviewRepository.delete(review);
     }

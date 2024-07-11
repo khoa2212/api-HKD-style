@@ -1,4 +1,4 @@
-package com.example.apidemo.payload;
+package com.example.apidemo.body;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
@@ -11,7 +11,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class Payload<T> {
+public class BodyContent<T> {
     private int statusCode;
     private String message;
     private T data;

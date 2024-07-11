@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
     @ExceptionHandler(ProductNotFoundException.class)
-    public ResponseEntity<ErrorMessage> userNotFoundExceptionHandler(
+    public ResponseEntity<ErrorMessage> handleProductNotFoundException(
             ProductNotFoundException ex, WebRequest request
     ) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorMessage(ex.getMessage(), ex.getCode()));
@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(ReviewNotFoundException.class)
     public ResponseEntity<ErrorMessage> handleReviewNotFoundException(ReviewNotFoundException ex, WebRequest request) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                .body(new ErrorMessage(ex.getMessage(), "NOT_FOUND"));
+                .body(new ErrorMessage(ex.getMessage(), ex.getCode()));
     }
     @ExceptionHandler(InvalidPropertiesFormatException.class)
     public ResponseEntity<ErrorMessage> handleInvalidPropertiesFormatException(InvalidPropertiesFormatException ex, WebRequest request) {
