@@ -5,7 +5,18 @@ include:
   - user-service/compose.yaml
   - email-service/compose.yaml
 
+services:
+  rabbitmq:
+    image: rabbitmq:3.13.3-management-alpine
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - hkd-network
+    
+
 networks:
   hkd-network:
-    driver: bridge
     name: hkd-network
+    external: true
