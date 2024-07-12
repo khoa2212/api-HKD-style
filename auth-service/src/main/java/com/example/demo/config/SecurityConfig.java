@@ -54,29 +54,11 @@ public class SecurityConfig {
         return http.build();
     }
 
-//    @Bean
-//    public AuthenticationManager authenticationManager(
-//            UserDetailsService userDetailsService,
-//            PasswordEncoder passwordEncoder) {
-//        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-//        authProvider.setUserDetailsService(userDetailsService);
-//        authProvider.setPasswordEncoder(passwordEncoder);
-//        return new ProviderManager(authProvider);
-//    }
-//
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        return email -> userRepository.findByEmail(email).orElse(null);
-//    }
-
     private OAuth2UserService<OidcUserRequest, OidcUser> oidcUserService() {
         final OidcUserService delegate = new OidcUserService();
         return userRequest -> {
             delegate.setAccessibleScopes(userRequest.getAccessToken().getScopes());
             return delegate.loadUser(userRequest);
         };
-    }
-    private OAuth2UserService<OAuth2UserRequest, OAuth2User> oAuth2UserService() {
-        return new DefaultOAuth2UserService();
     }
 }
