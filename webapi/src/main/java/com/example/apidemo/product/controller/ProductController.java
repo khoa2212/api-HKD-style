@@ -1,5 +1,7 @@
 package com.example.apidemo.product.controller;
 
+import com.example.apidemo.body.BodyContent;
+import com.example.apidemo.exception.ExceptionMessage;
 import com.example.apidemo.exception.ProductNotFoundException;
 import com.example.apidemo.product.dto.AddProductRequestDTO;
 import com.example.apidemo.product.dto.ListProductResponseDTO;
@@ -8,11 +10,12 @@ import com.example.apidemo.product.dto.UpdateProductRequestDTO;
 import com.example.apidemo.product.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.net.URI;
 
 @RestController
 public class ProductController {
@@ -36,8 +39,10 @@ public class ProductController {
     }
 
     @PostMapping(path = "/products")
-    public ResponseEntity<ProductDTO> add(@Valid @ModelAttribute AddProductRequestDTO addProductRequestDTO) throws IOException {
-        return ResponseEntity.ok().body(productService.add(addProductRequestDTO));
+    public ResponseEntity<BodyContent<ProductDTO>> add(@Valid @ModelAttribute AddProductRequestDTO addProductRequestDTO) throws IOException {
+        ProductDTO productDTO = productService.add(addProductRequestDTO);
+        return ResponseEntity.created(URI.create("/products/" + productDTO.getId()))
+                .body(new BodyContent<>(HttpStatus.CREATED.value(), ExceptionMessage.SUCCESS_MESSAGE, productDTO));
     }
 
     @DeleteMapping(path = "/products/{id}")
@@ -47,9 +52,9 @@ public class ProductController {
     }
 
     @PutMapping(path = "/products/{id}")
-    public ResponseEntity<ProductDTO> update(@PathVariable("id") String id, @Valid @ModelAttribute UpdateProductRequestDTO updateProductRequestDTO) throws IOException, ProductNotFoundException {
+    public ResponseEntity<BodyContent<ProductDTO>> update(@PathVariable("id") String id, @Valid @ModelAttribute UpdateProductRequestDTO updateProductRequestDTO) throws IOException, ProductNotFoundException {
         ProductDTO productDTO = productService.update(id, updateProductRequestDTO);
-        return ResponseEntity.ok().body(productDTO);
+        return ResponseEntity.ok().body(new BodyContent<>(HttpStatus.OK.value(), ExceptionMessage.SUCCESS_MESSAGE, productDTO));
     }
 }
 

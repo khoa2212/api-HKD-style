@@ -25,7 +25,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<ErrorBody> userNotFoundExceptionHandler(
             UserNotFoundException ex, WebRequest request
     ) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorBody(ex.getMessage(), "NotFound"));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getErrorBody());
     }
 
     @ExceptionHandler(JWTCreationException.class)
@@ -42,6 +42,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorBody("Invalid token", "Unauthorized"));
     }
 
-
+    @ExceptionHandler(OAuthEmailConflictException.class)
+    public ResponseEntity<ErrorBody> oauthEmailConflictExceptionHandler(
+            OAuthEmailConflictException ex, WebRequest request
+    ) {
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getErrorBody());
+    }
 
 }
