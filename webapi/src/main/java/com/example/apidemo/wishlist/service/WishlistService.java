@@ -1,5 +1,6 @@
 package com.example.apidemo.wishlist.service;
 
+import com.example.apidemo.exception.BadRequestException;
 import com.example.apidemo.exception.ExceptionMessage;
 import com.example.apidemo.exception.ItemNotFoundException;
 import com.example.apidemo.product.dto.ProductDTO;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -53,9 +55,15 @@ public class WishlistService {
                 .build();
     }
 
-    public ProductDTO addProductToWishlist(UUID userId, UUID productId) throws ItemNotFoundException {
+    public ProductDTO addProductToWishlist(UUID userId, UUID productId) throws ItemNotFoundException, BadRequestException {
         Product product = productRepository.findById(productId).orElseThrow(
                 () -> new ItemNotFoundException(ExceptionMessage.PRODUCT_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
+        Optional<Wishlist> wls = wishlistRepository.findByUserIdAndProductId(userId, productId);
+
+        if(wls.isPresent()) {
+            throw new BadRequestException(ExceptionMessage.ITEM_ALREADY_EXIST_IN_WISHLIST, ExceptionMessage.ITEM_ALREADY_EXIST_IN_WISHLIST_CODE);
+        }
+
         Wishlist wishlist = Wishlist.builder()
                 .userId(userId)
                 .product(product)

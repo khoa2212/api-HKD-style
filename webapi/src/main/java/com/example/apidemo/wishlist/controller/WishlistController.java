@@ -1,5 +1,6 @@
 package com.example.apidemo.wishlist.controller;
 
+import com.example.apidemo.exception.BadRequestException;
 import com.example.apidemo.exception.ItemNotFoundException;
 import com.example.apidemo.product.dto.ProductDTO;
 import com.example.apidemo.wishlist.dto.ChangeProductInWishlistDTO;
@@ -29,7 +30,7 @@ public class WishlistController {
     public ResponseEntity<ProductDTO> addProductToWishlist(
             @PathVariable("userId") String userId,
             @Valid @RequestBody ChangeProductInWishlistDTO request
-    ) throws ItemNotFoundException {
+    ) throws ItemNotFoundException, BadRequestException {
         return ResponseEntity.ok(wishlistService.addProductToWishlist(
                 UUID.fromString(userId), UUID.fromString(request.getProductId())));
     }

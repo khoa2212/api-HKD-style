@@ -19,4 +19,7 @@ public class ExceptionMessage {
 
     public static final String ITEM_ALREADY_EXIST_IN_CART = "Item already exist in cart";
     public static final String ITEM_ALREADY_EXIST_IN_CART_CODE = "itemAlreadyExistInCart";
+
+    public static final String ITEM_ALREADY_EXIST_IN_WISHLIST = "Item already exist in wishlist";
+    public static final String ITEM_ALREADY_EXIST_IN_WISHLIST_CODE = "itemAlreadyExistInWishlist";
 }
