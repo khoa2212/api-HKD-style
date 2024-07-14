@@ -53,6 +53,10 @@ public class User implements UserDetails {
 
     @Column
     private String phoneNumber;
+
+    @Enumerated(EnumType.STRING)
+    private ExternalProvider externalProvider;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority(role.name()));
