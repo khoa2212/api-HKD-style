@@ -29,8 +29,8 @@ public class CartController {
         return ResponseEntity.ok(cartDTO);
     }
 
-    @PostMapping("carts/users/{userId}/update-quantity")
-    public ResponseEntity<CartDTO> updateQuantity(@PathVariable("userId") String userId, @Valid @RequestBody UpdateQuantityDTO updateQuantityDTO) throws BadRequestException, ItemNotFoundException {
+    @PostMapping("carts/update-quantity")
+    public ResponseEntity<CartDTO> updateQuantity(@Valid @RequestBody UpdateQuantityDTO updateQuantityDTO) throws BadRequestException, ItemNotFoundException {
         CartDTO cartDTO = cartService.updateQuantity(updateQuantityDTO);
         return ResponseEntity.ok(cartDTO);
     }

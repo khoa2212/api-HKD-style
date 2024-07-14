@@ -80,9 +80,7 @@ public class CartService {
             cartItemRepository.save(cartItem);
         }
 
-        CartDTO cartDTO = findByUserId(userId);
-
-        return cartDTO;
+        return findByUserId(userId);
     }
 
     public void checkQuantity(int quantity, int stock) throws BadRequestException {
@@ -97,6 +95,15 @@ public class CartService {
 
         checkQuantity(updateQuantityDTO.getQuantity(), product.getStock());
 
-        return null;
+        CartItem cartItem = cartItemRepository.
+                findByCartIdAndProductId(cart.getId(), product.getId()).orElseThrow(() -> new ItemNotFoundException(ExceptionMessage.CART_ITEM_NOT_FOUND, ExceptionMessage.CART_ITEM_NOT_FOUND_CODE));
+
+        cartItem.setQuantity(updateQuantityDTO.getQuantity());
+
+        cartItemRepository.save(cartItem);
+
+        CartDTO myCart = cartMapper.toDTO(cartRepository.findById(cart.getId()).get());
+
+        return myCart;
     }
 }
