@@ -1,6 +1,6 @@
 package com.example.apidemo.product.service;
 
-import com.example.apidemo.exception.ProductNotFoundException;
+import com.example.apidemo.exception.ItemNotFoundException;
 import com.example.apidemo.product.entity.Product;
 import com.example.apidemo.product.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +14,7 @@ public class ProductBackGroundTaskService {
     @Autowired
     ProductRepository productRepository;
 
-    public void runTask() throws ProductNotFoundException {
+    public void runTask() throws ItemNotFoundException {
         System.out.println("Bat dau thoi");
 
         List<Product> products = productRepository.findAll();
@@ -38,13 +38,13 @@ public class ProductBackGroundTaskService {
         }
 
         for(String id : saleProductIds) {
-            Product product = productRepository.findById(UUID.fromString(id)).orElseThrow(() -> new ProductNotFoundException("Product not found", "productNotFound"));
+            Product product = productRepository.findById(UUID.fromString(id)).orElseThrow(() -> new ItemNotFoundException("Product not found", "productNotFound"));
             product.setSales(random.nextInt(100 - 20 + 1) + 20);
             productRepository.save(product);
         }
 
         for(String id : notSaleProductIds) {
-            Product product = productRepository.findById(UUID.fromString(id)).orElseThrow(() -> new ProductNotFoundException("Product not found", "productNotFound"));
+            Product product = productRepository.findById(UUID.fromString(id)).orElseThrow(() -> new ItemNotFoundException("Product not found", "productNotFound"));
             product.setSales(0);
             productRepository.save(product);
         }

@@ -1,6 +1,6 @@
 package com.example.apidemo.wishlist.controller;
 
-import com.example.apidemo.exception.ProductNotFoundException;
+import com.example.apidemo.exception.ItemNotFoundException;
 import com.example.apidemo.wishlist.dto.ChangeProductInWishlistDTO;
 import com.example.apidemo.wishlist.dto.WishlistProductDTO;
 import com.example.apidemo.wishlist.dto.WishlistResponseDTO;
@@ -29,7 +29,7 @@ public class WishlistController {
     public ResponseEntity<WishlistProductDTO> addProductToWishlist(
             @PathVariable("userId") String userId,
             @Valid @RequestBody ChangeProductInWishlistDTO request
-    ) throws ProductNotFoundException {
+    ) throws ItemNotFoundException {
         return ResponseEntity.ok(wishlistService.addProductToWishlist(
                 UUID.fromString(userId), UUID.fromString(request.getProductId())));
     }
@@ -37,7 +37,7 @@ public class WishlistController {
     @DeleteMapping(path = "/wishlists/{itemId}")
     public ResponseEntity<Void> removeProductFromWishlist(
             @PathVariable("itemId") String itemId
-    ) throws ProductNotFoundException {
+    ) throws ItemNotFoundException {
         wishlistService.removeProductFromWishlist(UUID.fromString(itemId));
         return ResponseEntity.noContent().build();
     }

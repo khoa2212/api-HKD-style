@@ -1,16 +1,13 @@
 package com.example.apidemo.review.controller;
 
 import com.example.apidemo.exception.ExceptionMessage;
-import com.example.apidemo.exception.ProductNotFoundException;
-import com.example.apidemo.exception.ReviewNotFoundException;
+import com.example.apidemo.exception.ItemNotFoundException;
 import com.example.apidemo.body.BodyContent;
 import com.example.apidemo.review.dto.ReviewDTO;
 import com.example.apidemo.review.dto.AddReviewRequestDTO;
 import com.example.apidemo.review.dto.UpdateReviewRequestDTO;
 import com.example.apidemo.review.service.ReviewService;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,11 +25,11 @@ public class ReviewController {
     @GetMapping(path = "/products/{productId}/reviews")
     public ResponseEntity<List<ReviewDTO>> findAllByProductId(
             @PathVariable("productId") String productId)
-            throws ProductNotFoundException {
+            throws ItemNotFoundException {
         return ResponseEntity.ok(reviewService.findAllByProductId(UUID.fromString(productId)));
     }
     @PostMapping(path = "/reviews/user/{userId}")
-    public ResponseEntity<BodyContent<ReviewDTO>> add(@PathVariable("userId") String userId, @Valid @RequestBody AddReviewRequestDTO addReviewRequestDTO) throws ProductNotFoundException {
+    public ResponseEntity<BodyContent<ReviewDTO>> add(@PathVariable("userId") String userId, @Valid @RequestBody AddReviewRequestDTO addReviewRequestDTO) throws ItemNotFoundException {
         ReviewDTO addedReviewDTO = reviewService.add(userId, addReviewRequestDTO);
         return ResponseEntity.created(URI.create("/reviews/" + addedReviewDTO.getId()))
                 .body(new BodyContent<>(HttpStatus.CREATED.value(),
@@ -40,7 +37,7 @@ public class ReviewController {
                         addedReviewDTO));
     }
     @PutMapping(path = "/reviews/{reviewId}")
-    public ResponseEntity<BodyContent<ReviewDTO>> update(@PathVariable("reviewId") String reviewId, @Valid @RequestBody UpdateReviewRequestDTO updateReviewRequestDTO) throws ReviewNotFoundException {
+    public ResponseEntity<BodyContent<ReviewDTO>> update(@PathVariable("reviewId") String reviewId, @Valid @RequestBody UpdateReviewRequestDTO updateReviewRequestDTO) throws ItemNotFoundException {
         ReviewDTO updatedReviewDTO = reviewService.update(reviewId, updateReviewRequestDTO);
         return ResponseEntity.ok()
                 .body(new BodyContent<>(HttpStatus.OK.value(),
@@ -49,7 +46,7 @@ public class ReviewController {
     }
 
     @DeleteMapping(path = "/reviews/{reviewId}")
-    public ResponseEntity<Void> delete(@PathVariable("reviewId") String reviewId) throws ReviewNotFoundException {
+    public ResponseEntity<Void> delete(@PathVariable("reviewId") String reviewId) throws ItemNotFoundException {
         reviewService.delete(reviewId);
         return ResponseEntity.noContent().build();
     }

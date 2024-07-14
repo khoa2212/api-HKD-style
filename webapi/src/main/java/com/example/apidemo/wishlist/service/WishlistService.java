@@ -1,7 +1,7 @@
 package com.example.apidemo.wishlist.service;
 
 import com.example.apidemo.exception.ExceptionMessage;
-import com.example.apidemo.exception.ProductNotFoundException;
+import com.example.apidemo.exception.ItemNotFoundException;
 import com.example.apidemo.product.entity.Product;
 import com.example.apidemo.product.repository.ProductRepository;
 import com.example.apidemo.wishlist.dto.WishlistProductDTO;
@@ -44,9 +44,9 @@ public class WishlistService {
                 .build();
     }
 
-    public WishlistProductDTO addProductToWishlist(UUID userId, UUID productId) throws ProductNotFoundException {
+    public WishlistProductDTO addProductToWishlist(UUID userId, UUID productId) throws ItemNotFoundException {
         Product product = productRepository.findById(productId).orElseThrow(
-                () -> new ProductNotFoundException(ExceptionMessage.PRODUCT_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
+                () -> new ItemNotFoundException(ExceptionMessage.PRODUCT_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
         Wishlist wishlist = Wishlist.builder()
                 .userId(userId)
                 .product(product)
@@ -56,9 +56,9 @@ public class WishlistService {
         return wishlistMapper.toWishListProductDTO(product);
     }
 
-    public void removeProductFromWishlist(UUID itemId) throws ProductNotFoundException {
+    public void removeProductFromWishlist(UUID itemId) throws ItemNotFoundException {
         Wishlist item = wishlistRepository.findById(itemId).orElseThrow(
-                () -> new ProductNotFoundException(ExceptionMessage.PRODUCT_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
+                () -> new ItemNotFoundException(ExceptionMessage.PRODUCT_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
 
         wishlistRepository.delete(item);
     }

@@ -25,7 +25,8 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests ->
                         requests.requestMatchers(HttpMethod.GET, "/products/**").permitAll()
-                        .anyRequest().authenticated())
+                                .requestMatchers("/carts/**").permitAll()
+                                .anyRequest().authenticated())
                 .addFilterBefore(new JWTFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
