@@ -14,14 +14,10 @@ spring:
           uri: http://webapi:8083
           predicates:
             - Path=/api/main/**
-          filters:
-            - AuthFilter
         - id: user-service-route
           uri: http://user-service:8084
           predicates:
             - Path=/api/users/**
-          filters:
-            - AuthFilter
         - id: email-service-route
           uri: http://email-service:8085
           predicates:
