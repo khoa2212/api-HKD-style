@@ -106,4 +106,9 @@ public class CartService {
 
         return myCart;
     }
+
+    public void removeItemFromCart(UUID itemId) throws ItemNotFoundException {
+        CartItem cartItem = cartItemRepository.findById(itemId).orElseThrow(() -> new ItemNotFoundException(ExceptionMessage.CART_ITEM_NOT_FOUND, ExceptionMessage.CART_ITEM_NOT_FOUND_CODE));
+        cartItemRepository.delete(cartItem);
+    }
 }

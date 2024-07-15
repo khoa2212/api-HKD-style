@@ -24,14 +24,20 @@ public class CartController {
     }
 
     @PostMapping(path = "carts/users/{userId}")
-    public ResponseEntity<CartDTO> add(@PathVariable("userId") String userId, @Valid @RequestBody AddItemToCartDTO addItemToCartDTO) throws ItemNotFoundException, BadRequestException {
+    public ResponseEntity<CartDTO> addItemToCart(@PathVariable("userId") String userId, @Valid @RequestBody AddItemToCartDTO addItemToCartDTO) throws ItemNotFoundException, BadRequestException {
         CartDTO cartDTO = cartService.addItemToCart(UUID.fromString(userId), addItemToCartDTO);
         return ResponseEntity.ok(cartDTO);
     }
 
-    @PostMapping("carts/update-quantity")
+    @PutMapping("carts/update-quantity")
     public ResponseEntity<CartDTO> updateQuantity(@Valid @RequestBody UpdateQuantityDTO updateQuantityDTO) throws BadRequestException, ItemNotFoundException {
         CartDTO cartDTO = cartService.updateQuantity(updateQuantityDTO);
         return ResponseEntity.ok(cartDTO);
+    }
+
+    @DeleteMapping("carts/items/{itemId}")
+    public ResponseEntity<Void> removeItemFromCart(@PathVariable("itemId") String itemId) throws ItemNotFoundException {
+        cartService.removeItemFromCart(UUID.fromString(itemId));
+        return ResponseEntity.noContent().build();
     }
 }
