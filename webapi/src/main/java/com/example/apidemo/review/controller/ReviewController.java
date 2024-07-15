@@ -7,6 +7,8 @@ import com.example.apidemo.review.dto.ReviewDTO;
 import com.example.apidemo.review.dto.AddReviewRequestDTO;
 import com.example.apidemo.review.dto.UpdateReviewRequestDTO;
 import com.example.apidemo.review.service.ReviewService;
+import com.example.apidemo.util.User;
+import com.example.apidemo.util.UtilService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -22,15 +24,19 @@ public class ReviewController {
     @Autowired
     ReviewService reviewService;
 
+    @Autowired
+    UtilService utilService;
+
     @GetMapping(path = "/products/{productId}/reviews")
     public ResponseEntity<List<ReviewDTO>> findAllByProductId(
             @PathVariable("productId") String productId)
             throws ItemNotFoundException {
         return ResponseEntity.ok(reviewService.findAllByProductId(UUID.fromString(productId)));
     }
-    @PostMapping(path = "/reviews/user/{userId}")
-    public ResponseEntity<BodyContent<ReviewDTO>> add(@PathVariable("userId") String userId, @Valid @RequestBody AddReviewRequestDTO addReviewRequestDTO) throws ItemNotFoundException {
-        ReviewDTO addedReviewDTO = reviewService.add(userId, addReviewRequestDTO);
+    @PostMapping(path = "/reviews")
+    public ResponseEntity<BodyContent<ReviewDTO>> add(@Valid @RequestBody AddReviewRequestDTO addReviewRequestDTO) throws ItemNotFoundException {
+        User user = utilService.getUserFromContext();
+        ReviewDTO addedReviewDTO = reviewService.add(user.getId(), addReviewRequestDTO);
         return ResponseEntity.created(URI.create("/reviews/" + addedReviewDTO.getId()))
                 .body(new BodyContent<>(HttpStatus.CREATED.value(),
                         ExceptionMessage.SUCCESS_MESSAGE,

@@ -34,11 +34,11 @@ public class ReviewService {
         return reviewMapper.toListDTO(reviews);
     }
 
-    public ReviewDTO add(String userId, AddReviewRequestDTO addReviewRequestDTO) throws ItemNotFoundException {
+    public ReviewDTO add(UUID userId, AddReviewRequestDTO addReviewRequestDTO) throws ItemNotFoundException {
         Product product = productRepository.findById(UUID.fromString(addReviewRequestDTO.getProductId()))
-                .orElseThrow(() -> new ItemNotFoundException(ExceptionMessage.REVIEW_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
+                .orElseThrow(() -> new ItemNotFoundException(ExceptionMessage.PRODUCT_NOT_FOUND, ExceptionMessage.PRODUCT_NOT_FOUND_CODE));
 
-        Review review = Review.builder().userId(UUID.fromString(userId))
+        Review review = Review.builder().userId(userId)
                 .fullName(addReviewRequestDTO.getFullName())
                 .content(addReviewRequestDTO.getContent())
                 .rating(addReviewRequestDTO.getRating())

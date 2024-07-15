@@ -3,6 +3,8 @@ package com.example.apidemo.wishlist.controller;
 import com.example.apidemo.exception.BadRequestException;
 import com.example.apidemo.exception.ItemNotFoundException;
 import com.example.apidemo.product.dto.ProductDTO;
+import com.example.apidemo.util.User;
+import com.example.apidemo.util.UtilService;
 import com.example.apidemo.wishlist.dto.ChangeProductInWishlistDTO;
 import com.example.apidemo.wishlist.dto.WishlistResponseDTO;
 import com.example.apidemo.wishlist.service.WishlistService;
@@ -19,20 +21,23 @@ public class WishlistController {
     @Autowired
     WishlistService wishlistService;
 
-    @GetMapping(path = "/wishlists/users/{userId}")
+    @Autowired
+    UtilService utilService;
+
+    @GetMapping(path = "/wishlists")
     public ResponseEntity<WishlistResponseDTO> getByUserId(
-        @PathVariable("userId") String userId
     ) {
-        return ResponseEntity.ok(wishlistService.getByUserId(UUID.fromString(userId)));
+        User authUser = utilService.getUserFromContext();
+        return ResponseEntity.ok(wishlistService.getByUserId(authUser.getId()));
     }
 
-    @PostMapping(path = "/wishlists/users/{userId}")
+    @PostMapping(path = "/wishlists")
     public ResponseEntity<ProductDTO> addProductToWishlist(
-            @PathVariable("userId") String userId,
             @Valid @RequestBody ChangeProductInWishlistDTO request
     ) throws ItemNotFoundException, BadRequestException {
+        User authUser = utilService.getUserFromContext();
         return ResponseEntity.ok(wishlistService.addProductToWishlist(
-                UUID.fromString(userId), UUID.fromString(request.getProductId())));
+                authUser.getId(), UUID.fromString(request.getProductId())));
     }
 
     @DeleteMapping(path = "/wishlists/{itemId}")
