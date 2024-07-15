@@ -13,9 +13,9 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
-    @ExceptionHandler(AuthenticationException.class)
+    @ExceptionHandler(AuthenticateException.class)
     public ResponseEntity<ErrorBody> authenticateExceptionHandler(
-            AuthenticationException ex, WebRequest request
+            AuthenticateException ex, WebRequest request
     ) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
                 new ErrorBody(ExceptionMessage.FAILED_AUTHENTICATION_MESSAGE, "BadRequest"));

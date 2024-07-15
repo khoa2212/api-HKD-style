@@ -25,6 +25,7 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests ->
                         requests.requestMatchers(HttpMethod.GET, "/products/**").permitAll()
+                                .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated())
                 .addFilterBefore(new JWTFilter(jwtService), UsernamePasswordAuthenticationFilter.class);
         return http.build();
