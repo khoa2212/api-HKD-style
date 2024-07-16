@@ -15,6 +15,9 @@ spring:
     password: ${POSTGRES_PASSWORD}
   flyway:
     baseline-on-migrate: true
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
 logging:
   level:
     org:

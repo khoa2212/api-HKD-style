@@ -22,6 +22,7 @@ import com.example.user_service.exception.UserNotFoundException;
 import com.example.user_service.mapper.UserMapper;
 import com.example.user_service.repository.UserRepository;
 import com.example.user_service.utils.JWTService;
+import org.springframework.amqp.core.AmqpTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatusCode;
@@ -44,19 +45,22 @@ public class UserService {
     private final JWTService jwtService;
     private final URLTokenService urlTokenService;
     private final String frontEndResetPasswordEndpoint;
+    private final MessageProducerService messageProducerService;
     public UserService(
             UserRepository userRepository,
             PasswordEncoder passwordEncoder,
             UserMapper userMapper,
             JWTService jwtService,
             URLTokenService urlTokenService,
-            @Value("${FRONTEND_RESET_PASSWORD_ENDPOINT}") String frontEndResetPasswordEndpoint) {
+            @Value("${FRONTEND_RESET_PASSWORD_ENDPOINT}") String frontEndResetPasswordEndpoint,
+            MessageProducerService messageProducerService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userMapper = userMapper;
         this.jwtService = jwtService;
         this.urlTokenService = urlTokenService;
         this.frontEndResetPasswordEndpoint = frontEndResetPasswordEndpoint;
+        this.messageProducerService = messageProducerService;
     }
 
     public UserResponseDTO addUser(AddUserRequestDTO request) throws DataIntegrityViolationException {
@@ -124,16 +128,19 @@ public class UserService {
                 .content(String.format(EmailMessage.PASSWORD_RESET_CONTENT, frontEndResetPasswordEndpoint, urlToken))
                 .build();
 
-        RestClient client = RestClient.create("http://email-service:8085");
-        client.post()
-                .uri("/api/mail")
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(sendMailRequest)
-                .retrieve()
-                .onStatus(HttpStatusCode::isError, (req, res) -> {
-                    throw new SendMailException("Failed to send mail");
-                })
-                .body(GeneralResponseDTO.class);
+        messageProducerService.sendForgotPasswordMessage(sendMailRequest);
+
+
+//        RestClient client = RestClient.create("http://email-service:8085");
+//        client.post()
+//                .uri("/api/mail")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .body(sendMailRequest)
+//                .retrieve()
+//                .onStatus(HttpStatusCode::isError, (req, res) -> {
+//                    throw new SendMailException("Failed to send mail");
+//                })
+//                .body(GeneralResponseDTO.class);
 
         return new GeneralResponseDTO("A password reset url has been sent to user's email");
 
