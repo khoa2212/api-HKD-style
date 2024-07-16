@@ -1,5 +1,6 @@
 package com.example.apidemo.wishlist.dto;
 
+import com.example.apidemo.product.dto.ProductDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,5 +16,5 @@ import java.util.List;
 @Builder
 public class WishlistResponseDTO {
     private String userId;
-    private List<WishlistProductDTO> products;
+    private List<ProductDTO> products;
 }

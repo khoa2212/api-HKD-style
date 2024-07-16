@@ -1,6 +1,8 @@
 package com.example.apidemo.filter;
 
 import com.example.apidemo.util.JWTService;
+import com.example.apidemo.util.Role;
+import com.example.apidemo.util.User;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 public class JWTFilter extends OncePerRequestFilter {
     private final JWTService jwtService;
@@ -34,9 +37,11 @@ public class JWTFilter extends OncePerRequestFilter {
         Map<String, String> payload = jwtService.validateToken(token);
         String email = payload.get("email");
         String role = payload.get("role");
+        String id = payload.get("sub");
         if (email != null) {
+            User authUser = new User(UUID.fromString(id), email, Role.valueOf(role));
             UsernamePasswordAuthenticationToken userToken = new UsernamePasswordAuthenticationToken(
-                    email, null, List.of(new SimpleGrantedAuthority(role))
+                    authUser, null, List.of(new SimpleGrantedAuthority(role))
             );
             userToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
             SecurityContextHolder.getContext().setAuthentication(userToken);
