@@ -2,6 +2,7 @@ package com.example.apidemo.cart.dto;
 
 import lombok.*;
 
+import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -10,6 +11,7 @@ import java.util.Set;
 @Setter
 @Builder
 public class CartDTO {
+    private String id;
     private String userId;
-    private Set<CartItemDTO> cartItems;
+    private List<CartItemDTO> cartItems;
 }

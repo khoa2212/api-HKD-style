@@ -1,49 +1,50 @@
 package com.example.apidemo.wishlist.controller;
 
-import com.example.apidemo.exception.ProductNotFoundException;
-import com.example.apidemo.wishlist.dto.AddProductToWishlistDTO;
-import com.example.apidemo.wishlist.dto.WishlistProductDTO;
+import com.example.apidemo.exception.BadRequestException;
+import com.example.apidemo.exception.ItemNotFoundException;
+import com.example.apidemo.product.dto.ProductDTO;
+import com.example.apidemo.util.User;
+import com.example.apidemo.util.UtilService;
+import com.example.apidemo.wishlist.dto.ChangeProductInWishlistDTO;
 import com.example.apidemo.wishlist.dto.WishlistResponseDTO;
 import com.example.apidemo.wishlist.service.WishlistService;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.http.MediaType;
+import jakarta.validation.Valid;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
 public class WishlistController {
-    private final WishlistService wishlistService;
-    public WishlistController(WishlistService wishlistService) {
-        this.wishlistService = wishlistService;
-    }
 
-    @GetMapping(
-            path = "/wishlists/{userId}",
-            produces = {MediaType.APPLICATION_JSON_VALUE}
-    )
-    public ResponseEntity<WishlistResponseDTO> getWishListByUserId(
-        @PathVariable("userId") String userId
+    @Autowired
+    WishlistService wishlistService;
+
+    @Autowired
+    UtilService utilService;
+
+    @GetMapping(path = "/wishlists")
+    public ResponseEntity<WishlistResponseDTO> getByUserId(
     ) {
-        return ResponseEntity.ok(wishlistService.getWishListByUser(UUID.fromString(userId)));
+        User authUser = utilService.getUserFromContext();
+        return ResponseEntity.ok(wishlistService.getByUserId(authUser.getId()));
     }
 
-    @PostMapping(
-            path = "/wishlists/{userId}",
-            consumes = {MediaType.APPLICATION_JSON_VALUE},
-            produces = {MediaType.APPLICATION_JSON_VALUE}
-    )
-    public ResponseEntity<WishlistProductDTO> addProductToWishlist(
-            @PathVariable("userId") String userId,
-            @RequestBody AddProductToWishlistDTO request
-    ) throws ProductNotFoundException {
+    @PostMapping(path = "/wishlists")
+    public ResponseEntity<ProductDTO> addProductToWishlist(
+            @Valid @RequestBody ChangeProductInWishlistDTO request
+    ) throws ItemNotFoundException, BadRequestException {
+        User authUser = utilService.getUserFromContext();
         return ResponseEntity.ok(wishlistService.addProductToWishlist(
-                UUID.fromString(userId), UUID.fromString(request.getProductId())));
+                authUser.getId(), UUID.fromString(request.getProductId())));
+    }
+
+    @DeleteMapping(path = "/wishlists/{itemId}")
+    public ResponseEntity<Void> removeProductFromWishlist(
+            @PathVariable("itemId") String itemId
+    ) throws ItemNotFoundException {
+        wishlistService.removeProductFromWishlist(UUID.fromString(itemId));
+        return ResponseEntity.noContent().build();
     }
 }

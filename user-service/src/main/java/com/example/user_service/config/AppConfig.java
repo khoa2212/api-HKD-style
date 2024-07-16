@@ -1,4 +1,4 @@
-package com.example.product_service.config;
+package com.example.user_service.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;

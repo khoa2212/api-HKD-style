@@ -10,9 +10,6 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class AddReviewRequestDTO {
-    @NotBlank(message = "User id must not be null or empty")
-    private String userId;
-
     @NotBlank(message = "Product id must not be null or empty")
     private String productId;
 
