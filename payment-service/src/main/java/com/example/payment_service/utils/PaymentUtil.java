@@ -11,7 +11,6 @@ import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
-import java.util.Base64;
 import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
@@ -30,12 +29,16 @@ public class PaymentUtil {
         Mac mac = Mac.getInstance(HMAC_SHA512);
         mac.init(spec);
         byte[] hashedData = mac.doFinal(content.getBytes(StandardCharsets.UTF_8));
-        return Base64.getEncoder().encodeToString(hashedData);
+        StringBuilder hashedStringBuilder = new StringBuilder();
+        for (byte b : hashedData) {
+            hashedStringBuilder.append(String.format("%02x", b & 0xff));
+        }
+        return hashedStringBuilder.toString();
     }
 
     public static String getVNPSecureHash(Map<String, String> params) throws NoSuchAlgorithmException, InvalidKeyException {
         String contentToHash = params.keySet().stream().sorted()
-                .map(k -> k + "=" + URLEncoder.encode(params.get(k), StandardCharsets.UTF_8))
+                .map(k -> k + "=" + URLEncoder.encode(params.get(k), StandardCharsets.US_ASCII))
                 .collect(Collectors.joining("&"));
         return hashStringWithHMAC(contentToHash, VNPayConfig.HASH_SECRET);
     }

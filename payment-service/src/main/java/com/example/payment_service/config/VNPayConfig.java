@@ -6,7 +6,7 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class VNPayConfig {
     public static final String PAYMENT_URL = "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html";
-    public static final String RETURN_URL = "http://localhost:8086/api/payment/result";
+    public static final String RETURN_URL = "http://localhost:8086/api/payment/vnpay/result";
 
     public static final String VERSION = "2.1.0";
     public static final String COMMAND = "pay";
@@ -27,4 +27,9 @@ public class VNPayConfig {
     public static final String EXPIRE_DATE_PARAM = "vnp_ExpireDate";
     public static final String TXNREF_PARAM = "vnp_TxnRef";
     public static final String SECURE_HASH_PARAM = "vnp_SecureHash";
+    public static final String BANK_CODE_PARAM = "vnp_BankCode";
+    public static final String PAYMENT_METHOD_PARAM = "vnp_CardType";
+    public static final String PAYMENT_INFO_PARAM = "vnp_OrderInfo";
+    public static final String PAYMENT_DATE_PARAM = "vnp_PayDate";
+    public static final String RESPONSE_CODE_PARAM = "vnp_ResponseCode";
 }
