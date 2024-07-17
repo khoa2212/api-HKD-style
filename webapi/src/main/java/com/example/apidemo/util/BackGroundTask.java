@@ -1,6 +1,6 @@
 package com.example.apidemo.util;
 
-import com.example.apidemo.exception.ProductNotFoundException;
+import com.example.apidemo.exception.ItemNotFoundException;
 import com.example.apidemo.product.service.ProductBackGroundTaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +15,7 @@ public class BackGroundTask {
     ProductBackGroundTaskService productBackGroundTaskService;
 
     @Scheduled(cron = "0 30 5 * * *") // run at 5:30 AM
-    public void randomSalesProduct() throws ProductNotFoundException {
+    public void randomSalesProduct() throws ItemNotFoundException {
         System.out.println("Scheduled");
         productBackGroundTaskService.runTask();
     }

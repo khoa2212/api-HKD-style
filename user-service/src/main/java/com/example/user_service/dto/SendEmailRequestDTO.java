@@ -8,13 +8,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-public class SendEmailRequestDTO {
+public class SendEmailRequestDTO implements Serializable {
     private String recipientEmail;
     private String subject;
     private String content;

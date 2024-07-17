@@ -1,9 +1,0 @@
-server:
-  port: 8082
-spring:
-  application:
-    name: product-service
-  data:
-    mongodb:
-      uri: mongodb://admin:andy9999@productdb:27017/
-      database: HKD-style
