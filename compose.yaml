@@ -4,6 +4,7 @@ include:
   - webapi/compose.yaml
   - user-service/compose.yaml
   - email-service/compose.yaml
+  - payment-service/compose.yaml
 
 services:
   rabbitmq:
