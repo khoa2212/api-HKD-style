@@ -36,10 +36,10 @@ public class PaymentUtil {
         return hashedStringBuilder.toString();
     }
 
-    public static String getVNPSecureHash(Map<String, String> params) throws NoSuchAlgorithmException, InvalidKeyException {
+    public static String getVNPSecureHash(Map<String, String> params, String secret) throws NoSuchAlgorithmException, InvalidKeyException {
         String contentToHash = params.keySet().stream().sorted()
                 .map(k -> k + "=" + URLEncoder.encode(params.get(k), StandardCharsets.US_ASCII))
                 .collect(Collectors.joining("&"));
-        return hashStringWithHMAC(contentToHash, VNPayConfig.HASH_SECRET);
+        return hashStringWithHMAC(contentToHash, secret);
     }
 }

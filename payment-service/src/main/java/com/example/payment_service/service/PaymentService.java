@@ -25,10 +25,12 @@ import java.util.stream.Collectors;
 @Service
 public class PaymentService {
     private final PaymentDetailsRepository paymentDetailsRepository;
+    private final VNPayConfig vnPayConfig;
     private final ZoneId systemTimeZone;
 
-    public PaymentService(PaymentDetailsRepository paymentDetailsRepository) {
+    public PaymentService(PaymentDetailsRepository paymentDetailsRepository, VNPayConfig vnPayConfig) {
         this.paymentDetailsRepository = paymentDetailsRepository;
+        this.vnPayConfig = vnPayConfig;
         this.systemTimeZone = ZoneId.of("Asia/Ho_Chi_Minh");
     }
 
@@ -36,7 +38,7 @@ public class PaymentService {
         Map<String, String> vnpParams = new HashMap<>();
         vnpParams.put(VNPayConfig.VERSION_PARAM, VNPayConfig.VERSION);
         vnpParams.put(VNPayConfig.COMMAND_PARAM, VNPayConfig.COMMAND);
-        vnpParams.put(VNPayConfig.TMNCODE_PARAM, VNPayConfig.TMNCODE);
+        vnpParams.put(VNPayConfig.TMNCODE_PARAM, vnPayConfig.getTMNCODE());
         vnpParams.put(VNPayConfig.RETURN_URL_PARAM, VNPayConfig.RETURN_URL);
 
         vnpParams.put(VNPayConfig.AMOUNT_PARAM, String.valueOf(requestBody.getAmount().intValue() * 100));
@@ -57,7 +59,7 @@ public class PaymentService {
         vnpParams.put(VNPayConfig.TXNREF_PARAM, PaymentUtil.getRandomNumbers(8));
 
         StringBuilder queryParams = new StringBuilder(buildQueryParams(vnpParams));
-        String secureHash = PaymentUtil.getVNPSecureHash(vnpParams);
+        String secureHash = PaymentUtil.getVNPSecureHash(vnpParams, vnPayConfig.getHASH_SECRET());
         queryParams.append("&").append(VNPayConfig.SECURE_HASH_PARAM).append("=").append(secureHash);
         return String.format("%s?%s", VNPayConfig.PAYMENT_URL, queryParams);
     }

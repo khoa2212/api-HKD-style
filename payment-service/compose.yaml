@@ -11,6 +11,8 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - SECRET_KEY=${SECRET_KEY}
       - JAVA_TOOL_OPTIONS=-agentlib:jdwp=transport=dt_socket,address=*:${PAYMENT_DEBUG_PORT},server=y,suspend=n
+      - VNPAY_TMNCODE=${VNPAY_TMNCODE}
+      - VNPAY_HASH_SECRET=${VNPAY_HASH_SECRET}
     ports:
       - "${PAYMENT_PUBLISH_PORT}:8086"
       - "${PAYMENT_DEBUG_PORT}:${PAYMENT_DEBUG_PORT}"
