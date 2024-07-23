@@ -1,7 +1,6 @@
-package com.example.apidemo.order.entity;
+package com.example.order_service.entity;
 
-import com.example.apidemo.base.BaseEntity;
-import com.example.apidemo.product.entity.Product;
+import com.example.order_service.base.BaseEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.JoinColumn;
@@ -12,6 +11,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -24,11 +25,10 @@ public class OrderItem extends BaseEntity {
     @Column(nullable = false)
     private int quantity;
 
+    @Column(nullable = false)
+    private UUID productId;
+
     @ManyToOne
     @JoinColumn(name = "order_id")
     private Order order;
-
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private Product product;
 }

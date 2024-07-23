@@ -1,0 +1,21 @@
+server:
+  port: 8087
+spring:
+  application:
+    name: order-service
+  datasource:
+    url: jdbc:postgresql://order-db:5432/${POSTGRES_DB}
+    username: ${POSTGRES_USERNAME}
+    password: ${POSTGRES_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+  flyway:
+    baseline-on-migrate: true
+  logging:
+    level:
+      org:
+        flywaydb: debug
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
